@@ -11,6 +11,9 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
 ![interfacescreenshot](images/screen0.png)
 documents overview
 
+![interfacescreenshot](images/screen4.png)
+documents overview with hidden collectionsbar
+
 ![interfacescreenshot](images/screen1.png)
 editing json in object mode
 
