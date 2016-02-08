@@ -1,0 +1,38 @@
+
+<i class="fa fa-file-text-o" title="collection id"></i>&nbsp;{{collectionInfo.id}}&nbsp;&nbsp;&nbsp;<i class="fa fa-files-o" title="{{collectionInfo.count}} documents"></i>&nbsp;{{format(collectionInfo.count, 2, 'math')}}
+<nav>
+  <ul class="pagination pagination-sm">
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    <li data-ng-repeat="idx in pages" class="page-item" data-ng-class="{active:((idx-1)*batchSize == from)}">
+      <a class="page-link" href="collection/{{collectionInfo.name}}/{{(idx-1)*batchSize}}/{{(idx-1)*batchSize+batchSize-1}}">{{idx}}</a>
+    </li>
+
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<table class="table table-sm" data-ng-if="docs.length" style="table-layout: fixed;">
+  <thead style="text-algin:left;">
+    <td style="width:80%;"><b>content</b></td>
+    <td style="width:200px;"><b>_key</b></td>
+  </thead>
+  <tbody>
+    <tr data-ng-repeat="doc in docs">
+      <td><a href="collection/{{params.collectionName}}/{{params.from}}/{{params.to}}/{{$index}}/document/{{doc._key}}"><pre style="padding-right:30px;overflow:hidden;text-overflow:ellipsis;margin:0px;">{{doc}}</pre></a></td>
+      <td style="text-overflow:hidden;overflow:hidden;">{{doc._key}}</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<!-- <pre>{{collectionInfo}}</pre> -->

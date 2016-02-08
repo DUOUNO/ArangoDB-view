@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ArangoDB view</title>
+  <base href="/_db/_system/view/">
+  <link rel="stylesheet" href="css/bootstrap-4-0-0.css"></link>
+  <link rel="stylesheet" href="css/font-awesome.css"></head>
+  <link rel="stylesheet" href="css/jsoneditor.css"></head>
+  <link rel="stylesheet" href="css/jsoneditor-flex.css"></head>
+  <link rel="stylesheet" href="css/custom.css"></head>
+</head>
+<body>
+
+<div class="div1" data-ng-hide="status==0" data-ng-controller="collectionsBarController" data-ng-include="'collectionsBar/collectionsBarView.html'"></div>
+<div class="div2">
+  <div style="flex-grow:1;" data-ng-controller="navBarController" data-ng-include="'navBar/navBarView.html'">
+  </div>
+  <div data-ng-view style="flex-grow:999;overflow:scroll;">
+  </div>
+</div>
+
+</body>
+<script type="text/javascript" src="lib/requirejs-2-1-11.js" data-main="main.js"></script>
+</html>
