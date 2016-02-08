@@ -4,7 +4,8 @@
 ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/arangodb). Its based on a flex design.
 
 ####features
-* allways to your left, collections overview (can be hidden)
+* always to your left, collections overview (can be hidden)
+* always to your top, basic infos / stats
 * pagination is saved when you edit a document and return to documents overview
 * next / prev document while in single document view
 
