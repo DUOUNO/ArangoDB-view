@@ -46,7 +46,7 @@ define(['app'], function (_app) {
       }
     },
     pub: function pub(msg, data) {
-      console.log('pubed', msg);
+      console.log('pubed', msg, data);
       lastData[msg] = data;
       if (!transactions[msg]) return;
       var _iteratorNormalCompletion2 = true;

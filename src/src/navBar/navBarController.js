@@ -12,10 +12,10 @@ RETURN {[t]:z}) RETURN x`
 
 import app from 'app'
 
-let angularModule = ['$scope', '$http', '$interval', 'formatService', 'messageBrokerService'];
+let angularModule = ['$scope', '$http', '$interval', 'formatService', 'messageBrokerService', '$route'];
 
 
-angularModule.push((scope, http, interval, format, messageBroker) => {
+angularModule.push((scope, http, interval, format, messageBroker, route) => {
   scope.format = format;
 
   scope.collectionsBarStatus = 1;
@@ -30,20 +30,17 @@ angularModule.push((scope, http, interval, format, messageBroker) => {
   scope.cfg.selectedDb = '_system';
   scope.cfg.collections = []
 
-  scope.loadCollectionsInfo = () => {
-    http.get(`/_db/${scope.cfg.selectedDb}/_api/collection`).then((data) => { 
-      scope.cfg.collections = data.data.collections;
-      messageBroker.pub('current.database', scope.cfg.selectedDb);
-      messageBroker.pub('collections', scope.cfg.collections);
-    });
-  }
-  scope.loadCollectionsInfo()
-
 
   scope.loadCollectionInfo = () => {
     if(!scope.cfg.selectedCollection) return;
     http.get(`/_db/${scope.cfg.selectedDb}/_api/collection/${scope.cfg.selectedCollection.name}/count`).then(data => console.log(scope.cfg.selectedCollectionInfo = data.data));
   }
+
+  scope.databaseChanged = () => {
+    messageBroker.pub('current.database', scope.cfg.selectedDb);
+    route.reload();
+  }
+  scope.databaseChanged();
 
 
   scope.groupCollections = (collection) => {
@@ -59,10 +56,6 @@ angularModule.push((scope, http, interval, format, messageBroker) => {
   }
   scope.refreshStats();
   interval(scope.refreshStats, 10 * 1000);
-
-  messageBroker.sub('collections.reload', scope);
-  scope.$on('collections.reload', () => scope.loadCollectionsInfo());
-
 });
 
 

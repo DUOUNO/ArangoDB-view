@@ -45,7 +45,6 @@ requirejs.config(requireJsConfig);
 requirejs(['jquery', 'angular',  'app', 'ngjsoneditor',
   'home/homeController',
   'navBar/navBarController',
-  'barStatus/barStatusController',
   'collectionsBar/collectionsBarController',
   'collection/collectionController',
   'document/documentController',

@@ -12,14 +12,11 @@ define(['app'], function (_app) {
   var angularModule = ['$scope', '$http', '$interval', 'messageBrokerService'];
   angularModule.push(function (scope, http, interval, messageBroker) {
     console.log('define collectionsBarController');
-    messageBroker.sub('collectionsbar.status collections current.collection', scope);
+    messageBroker.sub('collectionsbar.status collections.reload current.collection current.database', scope);
     scope.cfg = {};
     scope.status = 1;
     scope.collections = [];
     scope.currentCollection = '';
-    scope.$on('collectionsbar.status', function (e, status) {
-      console.log(scope.status = status);
-    });
 
     scope.setCurrentCollection = function () {
       var _iteratorNormalCompletion = true;
@@ -50,14 +47,22 @@ define(['app'], function (_app) {
       }
     };
 
-    scope.$on('collections', function (event, collections) {
-      scope.collections = collections;
-      scope.setCurrentCollection();
+    scope.reloadCollections = function () {
+      return http.get('/_db/' + messageBroker.last('current.database') + '/_api/collection').then(function (data) {
+        scope.collections = data.data.collections;
+        scope.setCurrentCollection();
+      });
+    };
+
+    scope.$on('collectionsbar.status', function (e, status) {
+      return scope.status = status;
     });
+    scope.$on('collections.reload', scope.reloadCollections);
     scope.$on('current.collection', function (e, currentCollection) {
       scope.currentCollection = currentCollection;
       scope.setCurrentCollection();
     });
+    scope.$on('current.database', scope.reloadCollections);
   });
 
   _app2.default.controller('collectionsBarController', angularModule);

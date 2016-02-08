@@ -19,7 +19,7 @@ define(['app'], function (_app) {
     scope.batchSize = to - from + 1;
     scope.docs = [];
     http.get('/_db/' + messageBroker.last('current.database') + '/_api/collection/' + params.collectionName + '/count').then(function (data) {
-      console.log(scope.collectionInfo = data.data);
+      scope.collectionInfo = data.data;
       messageBroker.pub('collections.reload');
       var pages = Math.ceil(scope.collectionInfo.count / scope.batchSize);
       var curpage = from / scope.batchSize + 1;

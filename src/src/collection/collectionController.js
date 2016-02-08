@@ -19,7 +19,7 @@ angularModule.push((scope, params, http, messageBroker, query, format) => {
   scope.docs = [];
 
   http.get(`/_db/${messageBroker.last('current.database')}/_api/collection/${params.collectionName}/count`).then(data => {
-    console.log(scope.collectionInfo = data.data);
+    scope.collectionInfo = data.data;
     messageBroker.pub('collections.reload');
 
     let pages = Math.ceil(scope.collectionInfo.count/scope.batchSize);

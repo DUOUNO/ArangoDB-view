@@ -20,7 +20,7 @@ import app from 'app'
     },
 
     pub: (msg, data) => {
-      console.log('pubed', msg);
+      console.log('pubed', msg, data);
       lastData[msg] = data;
       if(!transactions[msg]) return;
       for(let scope of transactions[msg]) {

@@ -10,8 +10,8 @@ define(['app'], function (_app) {
   }
 
   var stat = 'LET r = (FOR d IN _statistics sort d.time desc limit @time RETURN d)\nlet x = MERGE(FOR t IN [\'http\', \'client\', \'system\']\nlet z = MERGE(FOR a IN ATTRIBUTES(r[0][t])\nfilter !CONTAINS(a, \'Percent\')\nRETURN {[a]: sum(r[*][t][a]) / @time})\nRETURN {[t]:z}) RETURN x';
-  var angularModule = ['$scope', '$http', '$interval', 'formatService', 'messageBrokerService'];
-  angularModule.push(function (scope, http, interval, format, messageBroker) {
+  var angularModule = ['$scope', '$http', '$interval', 'formatService', 'messageBrokerService', '$route'];
+  angularModule.push(function (scope, http, interval, format, messageBroker, route) {
     scope.format = format;
     scope.collectionsBarStatus = 1;
 
@@ -33,22 +33,19 @@ define(['app'], function (_app) {
     scope.cfg.selectedDb = '_system';
     scope.cfg.collections = [];
 
-    scope.loadCollectionsInfo = function () {
-      http.get('/_db/' + scope.cfg.selectedDb + '/_api/collection').then(function (data) {
-        scope.cfg.collections = data.data.collections;
-        messageBroker.pub('current.database', scope.cfg.selectedDb);
-        messageBroker.pub('collections', scope.cfg.collections);
-      });
-    };
-
-    scope.loadCollectionsInfo();
-
     scope.loadCollectionInfo = function () {
       if (!scope.cfg.selectedCollection) return;
       http.get('/_db/' + scope.cfg.selectedDb + '/_api/collection/' + scope.cfg.selectedCollection.name + '/count').then(function (data) {
         return console.log(scope.cfg.selectedCollectionInfo = data.data);
       });
     };
+
+    scope.databaseChanged = function () {
+      messageBroker.pub('current.database', scope.cfg.selectedDb);
+      route.reload();
+    };
+
+    scope.databaseChanged();
 
     scope.groupCollections = function (collection) {
       if (collection.isSystem) {
@@ -72,10 +69,6 @@ define(['app'], function (_app) {
 
     scope.refreshStats();
     interval(scope.refreshStats, 10 * 1000);
-    messageBroker.sub('collections.reload', scope);
-    scope.$on('collections.reload', function () {
-      return scope.loadCollectionsInfo();
-    });
   });
 
   _app2.default.controller('navBarController', angularModule);

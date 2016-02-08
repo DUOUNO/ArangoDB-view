@@ -37,7 +37,7 @@ define([], function () {
   }
 
   requirejs.config(requireJsConfig);
-  requirejs(['jquery', 'angular', 'app', 'ngjsoneditor', 'home/homeController', 'navBar/navBarController', 'barStatus/barStatusController', 'collectionsBar/collectionsBarController', 'collection/collectionController', 'document/documentController', 'document/documentRouteController', 'services/messageBrokerService', 'services/queryService', 'services/formatService', 'services/testService'], function ($) {
+  requirejs(['jquery', 'angular', 'app', 'ngjsoneditor', 'home/homeController', 'navBar/navBarController', 'collectionsBar/collectionsBarController', 'collection/collectionController', 'document/documentController', 'document/documentRouteController', 'services/messageBrokerService', 'services/queryService', 'services/formatService', 'services/testService'], function ($) {
     $.ajaxSetup({
       cache: false
     });
