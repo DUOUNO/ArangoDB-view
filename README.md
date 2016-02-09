@@ -12,7 +12,7 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
 
 #### whats next?
 * delete documents
-* easies available way to filter / sort through documents, stay tunes
+* easiest available way to filter / sort through documents, stay tunes
 * manage(CRUD) collections / edges
 
 ![interfacescreenshot](images/screen0.png)
