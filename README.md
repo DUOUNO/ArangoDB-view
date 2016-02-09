@@ -3,12 +3,17 @@
 
 ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/arangodb). Its based on a flex design.
 
-####features
+#### features
 * actually displays right converted bytes (1000B = 1KB)
 * always to your left, collections overview (can be hidden)
 * always to your top, basic infos / stats
 * pagination is saved when you edit a document and return to documents overview
 * next / prev document while in single document view
+
+#### whats next?
+* delete documents
+* easies available way to filter / sort through documents, stay tunes
+* manage(CRUD) collections / edges
 
 ![interfacescreenshot](images/screen0.png)
 documents overview
