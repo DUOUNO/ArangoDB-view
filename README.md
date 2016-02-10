@@ -13,7 +13,6 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
 
 #### whats next?
 * delete documents
-
 * manage(CRUD) collections / edges
 
 ![interfacescreenshot](images/screen0.png)
@@ -54,3 +53,4 @@ Line 2 is the AQL statement that will filter all _keys samller 10. Note the conv
 After a short timeout your new rule is automatically saved and applied to the documents overview. When you click outside from the input field the edited rule is also saved and applied.
 
 ##### edit filter/sort rule
+To edit a rule just type the new rule into the rule input field. The rule is automatically save and applied when you click outside.
