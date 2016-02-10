@@ -1,5 +1,5 @@
 <div >
-<button title="hide / show collections" style="width:34px;outline:none;" data-ng-click="changeCollectionsBarStatus()" class="btn btn-primary-outline btn-sm"><i class="fa" data-ng-class="{'fa-caret-left':collectionsBarStatus==0,'fa-caret-right':collectionsBarStatus==1}"></i></button>
+<button title="hide / show collections" style="outline:none;border:none;" data-ng-click="changeCollectionsBarStatus()" class="btn btn-primary-outline btn-sm"><i class="fa" data-ng-class="{'fa-caret-left':collectionsBarStatus==0,'fa-caret-right':collectionsBarStatus==1}"></i></button>
     <span>{{cfg.arango.version}} {{cfg.arango.server}}</span> | <span> db:<select style="border:none;outline:none;" data-ng-model="cfg.selectedDb" data-ng-options="db for db in cfg.dbs track by db" data-ng-change="databaseChanged()"><option>_system</option></select></span>
     rx {{format(cfg.stats.client.bytesReceivedPerSecond, 2, 'IT')}} tx {{format(cfg.stats.client.bytesSentPerSecond, 2, 'IT')}} | cons {{format(cfg.stats.client.httpConnections, 0)}} | mem {{format(cfg.stats.system.residentSize,2,'IT')}}/{{format(cfg.stats.system.virtualSize,2,'IT')}}
 </div>

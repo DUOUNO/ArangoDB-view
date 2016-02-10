@@ -14,7 +14,9 @@ import app from 'app'
       query:(query) => {
         let d = q.defer();
         console.log('AQL-QUERY', query);
-        http.post(`/_db/${messageBroker.last('current.database')}/_api/cursor`, {cache:false,query:query}).then(data => d.resolve(data.data.result));
+        http.post(`/_db/${messageBroker.last('current.database')}/_api/cursor`, {cache:false,query:query,options:{fullCount:true}}).then(data => {
+          d.resolve(data.data);
+        });
         return d.promise;
       }
     }

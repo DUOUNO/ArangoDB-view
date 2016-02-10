@@ -47,12 +47,16 @@ requirejs(['jquery', 'angular',  'app', 'ngjsoneditor',
   'navBar/navBarController',
   'collectionsBar/collectionsBarController',
   'collection/collectionController',
+
   'document/documentController',
   'document/documentRouteController',
+
+  'manage/collectionsController',
 
   'services/messageBrokerService',
   'services/queryService',
   'services/formatService',
+  'services/fastFilterService',
   'services/testService'], ($) => {
   $.ajaxSetup({cache:false});
 

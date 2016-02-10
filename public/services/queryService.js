@@ -17,9 +17,12 @@ define(['app'], function (_app) {
         console.log('AQL-QUERY', _query);
         http.post('/_db/' + messageBroker.last('current.database') + '/_api/cursor', {
           cache: false,
-          query: _query
+          query: _query,
+          options: {
+            fullCount: true
+          }
         }).then(function (data) {
-          return d.resolve(data.data.result);
+          d.resolve(data.data);
         });
         return d.promise;
       }

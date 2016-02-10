@@ -17,6 +17,11 @@ app.config(['$routeProvider', '$locationProvider', '$sceDelegateProvider', (rout
 
     locationProvider.html5Mode(true)
 
+    route.when('/manage/collections', {
+      controller: 'collectionsController',
+      templateUrl: 'manage/collectionsView.html'
+    });
+
     route.when('/collection/:collectionName/:from/:to', {
       controller: 'collectionController',
       templateUrl: 'collection/collectionView.html'
@@ -27,10 +32,10 @@ app.config(['$routeProvider', '$locationProvider', '$sceDelegateProvider', (rout
       templateUrl: 'document/documentView.html'
     });
 
-    route.when('/collection/:collectionName/:from/:to/:index', {
-      controller: 'documentRouteController',
-      template:''
-    });
+    // route.when('/collection/:collectionName/:from/:to/:index', {
+    //   controller: 'documentRouteController',
+    //   template:''
+    // });
 
 
     // H O M E
@@ -44,6 +49,8 @@ app.config(['$routeProvider', '$locationProvider', '$sceDelegateProvider', (rout
 
 app.run(['$rootScope', '$location', 'messageBrokerService', (rootScope, location, messageBroker) => {
   messageBroker.pub('current.database', '_system');
+  messageBroker.pub('current.fastFilter', 'none');
+  messageBroker.pub('show.fastFilter', false);
   rootScope.$on('$routeChangeError', (a, b, c, d) => {
     console.log('routeChangeError');
   });

@@ -3,12 +3,13 @@
  *
  ***/
  
+ // @todo add fastFilter statement maybe into query.query
 import app from 'app'
 
-  let angularModule = ['$route', '$routeParams', 'queryService', '$q'];
+  let angularModule = ['$route', '$routeParams', 'queryService', 'fastFilterService', '$q'];
 
 
-  angularModule.push((route, params, query, q) => {
+  angularModule.push((route, params, query, fastFilter, q) => {
 
     return {
       test:() => {
@@ -27,8 +28,8 @@ import app from 'app'
           offset = 0;
           limit  = 2;
         } // if
-        query.query(`for doc in ${params.collectionName} limit ${offset},${limit} return doc._key`).then(result => {
-          // scope._keys = result;
+        query.query(`for doc in ${params.collectionName}  ${fastFilter.currentRule()}\n limit ${offset},${limit} return doc._key`).then(result => {
+          result = result.result;
           let newIndex = index + 1;
           if(newIndex > batchSize-1) {
             nextDocLink = `collection/${params.collectionName}/${from + batchSize}/${to + batchSize}/0/document/${result.slice(-1)[0]}`;

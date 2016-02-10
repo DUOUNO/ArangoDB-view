@@ -9,8 +9,8 @@ define(['app'], function (_app) {
     };
   }
 
-  var angularModule = ['$route', '$routeParams', 'queryService', '$q'];
-  angularModule.push(function (route, params, query, q) {
+  var angularModule = ['$route', '$routeParams', 'queryService', 'fastFilterService', '$q'];
+  angularModule.push(function (route, params, query, fastFilter, q) {
     return {
       test: function test() {
         var d = q.defer();
@@ -32,7 +32,8 @@ define(['app'], function (_app) {
           limit = 2;
         }
 
-        query.query('for doc in ' + params.collectionName + ' limit ' + offset + ',' + limit + ' return doc._key').then(function (result) {
+        query.query('for doc in ' + params.collectionName + '  ' + fastFilter.currentRule() + '\n limit ' + offset + ',' + limit + ' return doc._key').then(function (result) {
+          result = result.result;
           var newIndex = index + 1;
 
           if (newIndex > batchSize - 1) {

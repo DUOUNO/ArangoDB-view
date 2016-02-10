@@ -10,7 +10,9 @@ define(['app'], function (_app) {
   }
 
   var angularModule = ['$scope'];
-  angularModule.push(function (scope) {});
+  angularModule.push(function (scope) {
+    scope.test = {};
+  });
 
   _app2.default.controller('homeController', angularModule);
 });

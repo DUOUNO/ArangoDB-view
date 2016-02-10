@@ -3,6 +3,12 @@ var fs   = require('fs');
 var Foxx = require("org/arangodb/foxx");
 var controller = new Foxx.Controller(applicationContext);
 
+controller.get('/collections', function(req, res) {
+  res.json({
+    settings:applicationContext.collectionName('settings')
+  })
+});
+
 controller.get('/*', function (req, res) {
 
   var filePath = applicationContext.basePath + '/public/' + req.suffix.join('/');

@@ -25,6 +25,10 @@ define(['exports', 'angular', 'angular-route', 'angular-animate', 'jsoneditor', 
   var app = angular.module('app', ['ngRoute', 'ngAnimate', 'ng.jsoneditor']);
   app.config(['$routeProvider', '$locationProvider', '$sceDelegateProvider', function (route, locationProvider, sceDelegateProvider) {
     locationProvider.html5Mode(true);
+    route.when('/manage/collections', {
+      controller: 'collectionsController',
+      templateUrl: 'manage/collectionsView.html'
+    });
     route.when('/collection/:collectionName/:from/:to', {
       controller: 'collectionController',
       templateUrl: 'collection/collectionView.html'
@@ -32,10 +36,6 @@ define(['exports', 'angular', 'angular-route', 'angular-animate', 'jsoneditor', 
     route.when('/collection/:collectionName/:from/:to/:index/document/:documentKey', {
       controller: 'documentController',
       templateUrl: 'document/documentView.html'
-    });
-    route.when('/collection/:collectionName/:from/:to/:index', {
-      controller: 'documentRouteController',
-      template: ''
     });
     route.when('/', {
       controller: 'homeController',
@@ -47,6 +47,8 @@ define(['exports', 'angular', 'angular-route', 'angular-animate', 'jsoneditor', 
   }]);
   app.run(['$rootScope', '$location', 'messageBrokerService', function (rootScope, location, messageBroker) {
     messageBroker.pub('current.database', '_system');
+    messageBroker.pub('current.fastFilter', 'none');
+    messageBroker.pub('show.fastFilter', false);
     rootScope.$on('$routeChangeError', function (a, b, c, d) {
       console.log('routeChangeError');
     });

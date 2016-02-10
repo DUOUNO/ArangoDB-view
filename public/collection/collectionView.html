@@ -1,5 +1,18 @@
+<form class="form-inline">
+  <div class="form-group">
+    <i class="fa fa-file-text-o" title="collection id"></i>&nbsp;{{collectionInfo.id}}&nbsp;&nbsp;&nbsp;<i class="fa fa-files-o" title="{{collectionInfo.count}} documents"></i>&nbsp;{{format(collectionInfo.count, 2, 'math')}}&nbsp;&nbsp;&nbsp;
+  </div>
+  <div class="input-group input-group-sm" style="">
+    <span class="input-group-btn">
+      <button class="btn btn-sm btn-primary btn-primary-outline" title="show / hide fast filters" data-ng-click="toggleFastFilterTexterea()"><i class="fa fa-fighter-jet"></i><i class="fa fa-filter"></i><i class="fa fa-sort"></i></button>
+    </span>
+    <select class="form-control" data-ng-model="fastFilter.selectedRule" data-ng-options="key as value.name for (key, value) in rules | orderBy:'name'" data-ng-change="fastFilterRuleChanged()" style="height:32px;"></select>
+  </div>
+</form>
 
-<i class="fa fa-file-text-o" title="collection id"></i>&nbsp;{{collectionInfo.id}}&nbsp;&nbsp;&nbsp;<i class="fa fa-files-o" title="{{collectionInfo.count}} documents"></i>&nbsp;{{format(collectionInfo.count, 2, 'math')}}
+  <!-- angluar 1.5 orderBy with object :S -->
+<textarea data-ng-if="fastFilter.active" id="filterRuleText" rows="{{fastFilter.editableRule.split('\n').length+1}}" data-ng-model-options="{ debounce: { 'default': 1000}}" class="form-control" style="font-family:monospace; white-space: pre; margin-top:5px;" title="describe your filter here. Eg. filter doc._key == 'abcd'" data-ng-change="applyFastFilter()" data-ng-blur="applyFastFilter(true)" data-ng-model="fastFilter.editableRule"></textarea>
+
 <nav>
   <ul class="pagination pagination-sm">
     <li class="page-item">
