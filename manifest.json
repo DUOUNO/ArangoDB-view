@@ -6,8 +6,10 @@
   "license": "AGPLv3",
   "controllers": {
     "/": "controllers/view.js"
-
   },
 
+   "scripts": {
+    "setup": "scripts/setup.js"
+  },
   "defaultDocument":""
 }
