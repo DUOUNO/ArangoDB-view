@@ -59,8 +59,7 @@ define(['app'], function (_app) {
       return scope.status = status;
     });
     scope.$on('collections.reload', function () {
-      console.log('reload collections');
-      scope.reloadCollections;
+      return scope.reloadCollections();
     });
     scope.$on('current.collection', function (e, currentCollection) {
       scope.currentCollection = currentCollection;

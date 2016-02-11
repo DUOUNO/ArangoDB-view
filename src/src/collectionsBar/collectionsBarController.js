@@ -32,7 +32,7 @@ angularModule.push((scope, http, interval, messageBroker) => {
 
   scope.$on('collectionsbar.status', (e,status) => scope.status = status);
 
-  scope.$on('collections.reload', () => {console.log('reload collections'); scope.reloadCollections; });
+  scope.$on('collections.reload', () => scope.reloadCollections());
 
   scope.$on('current.collection', (e, currentCollection) => { scope.currentCollection = currentCollection; scope.setCurrentCollection();});
 
