@@ -13,7 +13,7 @@ define(['app'], function (_app) {
   var lastData = {};
   var MessageBrokerService = {
     sub: function sub(msgs, scope) {
-      console.log('sub', msgs);
+      console.log('SUB', msgs);
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
@@ -46,7 +46,7 @@ define(['app'], function (_app) {
       }
     },
     pub: function pub(msg, data) {
-      console.log('pubed', msg, data);
+      console.log('PUB', msg, data);
       lastData[msg] = data;
       if (!transactions[msg]) return;
       var _iteratorNormalCompletion2 = true;

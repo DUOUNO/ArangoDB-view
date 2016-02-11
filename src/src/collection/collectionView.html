@@ -4,9 +4,9 @@
   </div>
   <div class="input-group input-group-sm" style="">
     <span class="input-group-btn">
-      <button class="btn btn-sm btn-primary btn-primary-outline" title="show / hide fast filters" data-ng-click="toggleFastFilterTexterea()"><i class="fa fa-fighter-jet"></i><i class="fa fa-filter"></i><i class="fa fa-sort"></i></button>
+      <button class="btn btn-sm btn-primary btn-primary-outline" title="show / hide filter input field" data-ng-click="toggleFastFilterTexterea()"><i class="fa fa-fighter-jet"></i><i class="fa fa-filter"></i><i class="fa fa-sort"></i></button>
     </span>
-    <select class="form-control" data-ng-model="fastFilter.selectedRule" data-ng-options="key as value.name for (key, value) in rules | orderBy:'name'" data-ng-change="fastFilterRuleChanged()" style="height:32px;"></select>
+    <select title="click to select a rule" class="form-control" data-ng-model="fastFilter.selectedRule" data-ng-options="key as value.name for (key, value) in rules" data-ng-change="fastFilterRuleChanged()" style="height:32px;"></select>
   </div>
 </form>
 
@@ -22,7 +22,7 @@
       </a>
     </li>
     <li data-ng-repeat="idx in pages" class="page-item" data-ng-class="{active:((idx-1)*batchSize == from)}">
-      <a class="page-link" href="collection/{{collectionInfo.name}}/{{(idx-1)*batchSize}}/{{(idx-1)*batchSize+batchSize-1}}">{{idx}}</a>
+      <a class="page-link" href="database/{{params.currentDatabase}}/collection/{{params.currentCollection}}/{{(idx-1)*batchSize}}/{{(idx-1)*batchSize+batchSize-1}}">{{idx}}</a>
     </li>
 
     <li class="page-item">
@@ -41,11 +41,8 @@
   </thead>
   <tbody>
     <tr data-ng-repeat="doc in docs">
-      <td><a href="collection/{{params.collectionName}}/{{params.from}}/{{params.to}}/{{$index}}/document/{{doc._key}}"><pre style="padding-right:30px;overflow:hidden;text-overflow:ellipsis;margin:0px;">{{doc}}</pre></a></td>
+      <td><a href="database/{{params.currentDatabase}}/collection/{{params.currentCollection}}/{{params.from}}/{{params.to}}/{{$index}}/document/{{doc._key}}"><pre style="padding-right:30px;overflow:hidden;text-overflow:ellipsis;margin:0px;">{{doc}}</pre></a></td>
       <td style="text-overflow:hidden;overflow:hidden;">{{doc._key}}</td>
     </tr>
   </tbody>
 </table>
-
-
-<!-- <pre>{{collectionInfo}}</pre> -->

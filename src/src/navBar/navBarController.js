@@ -12,44 +12,31 @@ RETURN {[t]:z}) RETURN x`
 
 import app from 'app'
 
-let angularModule = ['$scope', '$http', '$interval', 'formatService', 'messageBrokerService', '$route'];
+let angularModule = ['$scope', '$http', '$interval', 'formatService', 'messageBrokerService', '$location'];
 
 
-angularModule.push((scope, http, interval, format, messageBroker, route) => {
+angularModule.push((scope, http, interval, format, messageBroker, location) => {
+  console.log('init navBarController');
   scope.format = format;
 
   scope.collectionsBarStatus = 1;
-  scope.changeCollectionsBarStatus = () => {scope.collectionsBarStatus++; if(scope.collectionsBarStatus>1)scope.collectionsBarStatus=0; messageBroker.pub('collectionsbar.status', scope.collectionsBarStatus);}
+  scope.changeCollectionsBarStatus = () => {
+    scope.collectionsBarStatus++; if(scope.collectionsBarStatus>1)scope.collectionsBarStatus=0; messageBroker.pub('collectionsbar.status', scope.collectionsBarStatus);}
 
   http.get('/_db/_system/_api/version').then(data => scope.cfg.arango = data.data);
   http.get('/_api/database').then(data => scope.cfg.dbs = data.data.result);
   
   scope.cfg = {};
   scope.cfg.arango = 'n/a';
-  scope.cfg.dbs = ['_system'];
-  scope.cfg.selectedDb = '_system';
-  scope.cfg.collections = []
+  scope.cfg.dbs = [];
+  scope.cfg.selectedDb = '';
 
+  scope.databaseChanged = () => location.url(`/database/${scope.cfg.selectedDb}`);
 
-  scope.loadCollectionInfo = () => {
-    if(!scope.cfg.selectedCollection) return;
-    http.get(`/_db/${scope.cfg.selectedDb}/_api/collection/${scope.cfg.selectedCollection.name}/count`).then(data => console.log(scope.cfg.selectedCollectionInfo = data.data));
-  }
+  // scope.databaseChanged();
 
-  scope.databaseChanged = () => {
-    messageBroker.pub('current.database', scope.cfg.selectedDb);
-    route.reload();
-  }
-  scope.databaseChanged();
-
-
-  scope.groupCollections = (collection) => {
-    if(collection.isSystem) {
-      return 'system collections';
-    } else {
-      return 'user collections';
-    }
-  }
+  scope.$on('current.database', (e, database) => scope.cfg.selectedDb = database);
+  messageBroker.sub('current.database', scope);
 
   scope.refreshStats = () => {
     http.post(`/_db/_system/_api/cursor`, {cache:false,query:stat,bindVars:{time:6}}).then(data => scope.cfg.stats = data.data.result[0]);

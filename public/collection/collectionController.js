@@ -17,7 +17,6 @@ define(['app'], function (_app) {
     var to = scope.to = Number(params.to);
     scope.batchSize = to - from + 1;
     scope.docs = [];
-    messageBroker.pub('current.collection', params.collectionName);
     scope.rules = fastFilterService.rules;
     scope.fastFilter = {
       editableRule: scope.rules[messageBroker.last('current.fastFilter')].rule,
@@ -94,14 +93,14 @@ define(['app'], function (_app) {
       scope.queryDocs();
     };
 
-    http.get('/_db/' + messageBroker.last('current.database') + '/_api/collection/' + params.collectionName + '/count').then(function (data) {
+    http.get('/_db/' + params.currentDatabase + '/_api/collection/' + params.currentCollection + '/count').then(function (data) {
       scope.collectionInfo = data.data;
       messageBroker.pub('collections.reload');
       scope.queryDocs();
     });
 
     scope.queryDocs = function () {
-      query.query('for doc in ' + params.collectionName + ' let attr = slice(attributes(doc), 0, 20) ' + scope.fastFilter.editableRule + ' \nlimit ' + params.from + ',' + scope.batchSize + ' return keep(doc, attr)').then(function (result) {
+      query.query('for doc in ' + params.currentCollection + ' let attr = slice(attributes(doc), 0, 20) ' + scope.fastFilter.editableRule + ' \nlimit ' + params.from + ',' + scope.batchSize + ' return keep(doc, attr)').then(function (result) {
         scope.collectionInfo.count = result.extra.stats.fullCount;
         var pages = Math.ceil(result.extra.stats.fullCount / scope.batchSize);
         var curpage = from / scope.batchSize + 1;

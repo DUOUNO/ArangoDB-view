@@ -16,6 +16,7 @@ angularModule.push((scope, http, interval, messageBroker) => {
   scope.status = 1;
   scope.collections = [];
   scope.currentCollection = '';
+  scope.currentDatabase   = '';
 
   scope.setCurrentCollection = () => {
     for(let col of scope.collections) {
@@ -27,15 +28,19 @@ angularModule.push((scope, http, interval, messageBroker) => {
     }
   }
 
-  scope.reloadCollections = () => http.get(`/_db/${messageBroker.last('current.database')}/_api/collection`).then(data => {scope.collections = data.data.collections; scope.setCurrentCollection();});
+  scope.reloadCollections = () => http.get(`/_db/${scope.currentDatabase}/_api/collection`).then(data => {scope.collections = data.data.collections; scope.setCurrentCollection();});
 
   scope.$on('collectionsbar.status', (e,status) => scope.status = status);
 
-  scope.$on('collections.reload', scope.reloadCollections);
+  scope.$on('collections.reload', () => {console.log('reload collections'); scope.reloadCollections; });
 
   scope.$on('current.collection', (e, currentCollection) => { scope.currentCollection = currentCollection; scope.setCurrentCollection();});
 
-  scope.$on('current.database', scope.reloadCollections);
+  scope.$on('current.database', (e, database) => {
+    if(database === scope.currentDatabase) return;
+    scope.currentDatabase = database;
+    scope.reloadCollections();
+  });
 });
 
 

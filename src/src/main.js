@@ -26,12 +26,13 @@ let requireJsConfig = {
   paths: {}
 }
 
+let angularVersion = '1-5-0';
 let requireJsPaths = {
   'bootstrap'      : 'lib/bootstrap-4-0-0',
   'jquery'         : 'lib/jquery-2-2-0',
-  'angular'        : 'lib/angular-1-4-9',
-  'angular-route'  : 'lib/angular-route-1-4-9',
-  'angular-animate': 'lib/angular-animate-1-4-9',
+  'angular'        : `lib/angular-${angularVersion}`,
+  'angular-route'  : `lib/angular-route-${angularVersion}`,
+  'angular-animate': `lib/angular-animate-${angularVersion}`,
   'jsoneditor'     : 'lib/jsoneditor-5-1-3',
   'ngjsoneditor'   : 'lib/ngjsoneditor-1-0-0'
 }

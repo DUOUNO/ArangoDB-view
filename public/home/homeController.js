@@ -11,6 +11,7 @@ define(['app'], function (_app) {
 
   var angularModule = ['$scope'];
   angularModule.push(function (scope) {
+    console.log('init homeController');
     scope.test = {};
   });
 

@@ -10,7 +10,8 @@ let angularModule = ['$scope']
 
 angularModule.push((scope) => {
 
-scope.test = {};
+  console.log('init homeController');
+  scope.test = {};
 
   // scope.test.selected = 'a';
 

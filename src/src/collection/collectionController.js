@@ -16,7 +16,6 @@ angularModule.push((scope, params, http, messageBroker, query, format, fastFilte
   let to   = scope.to   = Number(params.to);
   scope.batchSize = to - from + 1;
   scope.docs = [];
-  messageBroker.pub('current.collection', params.collectionName);
 
   scope.rules = fastFilterService.rules;
 
@@ -86,7 +85,7 @@ angularModule.push((scope, params, http, messageBroker, query, format, fastFilte
     scope.queryDocs();
   }
 
-  http.get(`/_db/${messageBroker.last('current.database')}/_api/collection/${params.collectionName}/count`).then(data => {
+  http.get(`/_db/${params.currentDatabase}/_api/collection/${params.currentCollection}/count`).then(data => {
     scope.collectionInfo = data.data;
     messageBroker.pub('collections.reload');
     scope.queryDocs();
@@ -94,7 +93,7 @@ angularModule.push((scope, params, http, messageBroker, query, format, fastFilte
 
   // call pagination
   scope.queryDocs = () => {
-    query.query(`for doc in ${params.collectionName} let attr = slice(attributes(doc), 0, 20) ${scope.fastFilter.editableRule} \nlimit ${params.from},${scope.batchSize} return keep(doc, attr)`).then( (result) => {
+    query.query(`for doc in ${params.currentCollection} let attr = slice(attributes(doc), 0, 20) ${scope.fastFilter.editableRule} \nlimit ${params.from},${scope.batchSize} return keep(doc, attr)`).then( (result) => {
       scope.collectionInfo.count = result.extra.stats.fullCount;
       let pages = Math.ceil(result.extra.stats.fullCount/scope.batchSize);
 

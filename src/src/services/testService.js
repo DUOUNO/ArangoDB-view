@@ -28,21 +28,21 @@ import app from 'app'
           offset = 0;
           limit  = 2;
         } // if
-        query.query(`for doc in ${params.collectionName}  ${fastFilter.currentRule()}\n limit ${offset},${limit} return doc._key`).then(result => {
+        query.query(`for doc in ${params.currentCollection} ${fastFilter.currentRule()}\n limit ${offset},${limit} return doc._key`).then(result => {
           result = result.result;
           let newIndex = index + 1;
           if(newIndex > batchSize-1) {
-            nextDocLink = `collection/${params.collectionName}/${from + batchSize}/${to + batchSize}/0/document/${result.slice(-1)[0]}`;
+            nextDocLink = `database/${params.currentDatabase}/collection/${params.currentCollection}/${from + batchSize}/${to + batchSize}/0/document/${result.slice(-1)[0]}`;
           } else {
-            nextDocLink = `collection/${params.collectionName}/${from}/${to}/${index+1}/document/${result.slice(-1)[0]}`;
+            nextDocLink = `database/${params.currentDatabase}/collection/${params.currentCollection}/${from}/${to}/${index+1}/document/${result.slice(-1)[0]}`;
           }
           newIndex = index-1;
           if(newIndex < 0) {
-            prevDocLink = `collection/${params.collectionName}/${from - batchSize}/${to - batchSize}/${batchSize-1}/document/${result.slice(0,1)[0]}`;
+            prevDocLink = `database/${params.currentDatabase}/collection/${params.currentCollection}/${from - batchSize}/${to - batchSize}/${batchSize-1}/document/${result.slice(0,1)[0]}`;
           } else {
-            prevDocLink = `collection/${params.collectionName}/${from}/${to}/${index-1}/document/${result.slice(0,1)[0]}`;
+            prevDocLink = `database/${params.currentDatabase}/collection/${params.currentCollection}/${from}/${to}/${index-1}/document/${result.slice(0,1)[0]}`;
           }
-          docsLink = `collection/${params.collectionName}/${from}/${to}`;
+          docsLink = `database/${params.currentDatabase}/collection/${params.currentCollection}/${from}/${to}`;
           d.resolve({docsLink, prevDocLink, nextDocLink, _keys:result});
         });
         return d.promise;

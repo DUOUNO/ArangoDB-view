@@ -11,19 +11,19 @@ define(['app', 'jquery'], function (_app, _jquery) {
     };
   }
 
-  var angularModule = ['$scope', '$routeParams', '$http', 'messageBrokerService', 'queryService', 'testService'];
-  angularModule.push(function (scope, params, http, messageBroker, query, testService) {
-    messageBroker.pub('current.collection', params.collectionName);
+  var angularModule = ['$scope', '$routeParams', '$http', 'testService'];
+  angularModule.push(function (scope, params, http, testService) {
+    console.log('init documentController');
+    scope.params = params;
     var from = scope.from = Number(params.from);
     var to = Number(params.to);
     var index = scope.index = Number(params.index);
+    scope._doc = {};
     testService.test().then(function (results) {
       var _results;
 
       return _results = results, scope.docsLink = _results.docsLink, scope.prevDocLink = _results.prevDocLink, scope.nextDocLink = _results.nextDocLink, scope._keys = _results._keys, _results;
     });
-    scope.params = params;
-    scope._doc = {};
     scope.obj = {
       data: {},
       preferText: true,
@@ -43,7 +43,7 @@ define(['app', 'jquery'], function (_app, _jquery) {
       },
       canSave: true
     };
-    http.get('/_db/' + messageBroker.last('current.database') + '/_api/document/' + params.collectionName + '/' + params.documentKey).then(function (data) {
+    http.get('/_db/' + params.currentDatabase + '/_api/document/' + params.currentCollection + '/' + params.documentKey).then(function (data) {
       scope.obj.data = data.data;
       var _arr = ['_id', '_rev', '_key', '_from', '_to'];
 
@@ -60,7 +60,7 @@ define(['app', 'jquery'], function (_app, _jquery) {
     scope.saveDoc = function () {
       console.log(scope.obj.data);
       console.log(Object.assign({}, scope.obj.data, scope._doc));
-      http.put('/_db/' + messageBroker.last('current.database') + '/_api/document/' + params.collectionName + '/' + params.documentKey, scope.obj.data).then(function (data) {
+      http.put('/_db/' + params.currentDatabase + '/_api/document/' + params.currentCollection + '/' + params.documentKey, scope.obj.data).then(function (data) {
         console.log(data);
       });
     };

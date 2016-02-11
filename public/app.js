@@ -29,30 +29,46 @@ define(['exports', 'angular', 'angular-route', 'angular-animate', 'jsoneditor', 
       controller: 'collectionsController',
       templateUrl: 'manage/collectionsView.html'
     });
-    route.when('/collection/:collectionName/:from/:to', {
+    route.when('/database/:currentDatabase/collection/:currentCollection/:from/:to', {
       controller: 'collectionController',
       templateUrl: 'collection/collectionView.html'
     });
-    route.when('/collection/:collectionName/:from/:to/:index/document/:documentKey', {
+    route.when('/database/:currentDatabase/collection/:currentCollection/:from/:to/:index/document/:documentKey', {
       controller: 'documentController',
       templateUrl: 'document/documentView.html'
     });
-    route.when('/', {
+    route.when('/database/:currentDatabase', {
       controller: 'homeController',
       templateUrl: 'home/homeView.html'
     });
     route.otherwise({
-      redirectTo: '/'
+      redirectTo: '/database/_system'
     });
   }]);
-  app.run(['$rootScope', '$location', 'messageBrokerService', function (rootScope, location, messageBroker) {
+  app.run(['$rootScope', '$location', 'messageBrokerService', '$routeParams', '$route', function (rootScope, location, messageBroker, routeParams, route) {
     messageBroker.pub('current.database', '_system');
     messageBroker.pub('current.fastFilter', 'none');
     messageBroker.pub('show.fastFilter', false);
     rootScope.$on('$routeChangeError', function (a, b, c, d) {
       console.log('routeChangeError');
     });
-    rootScope.$on('$locationChangeStart', function (e, newUrl, oldUrl) {});
+    rootScope.$on('$routeChangeStart', function () {
+      console.log('routeChangeStart');
+    });
+    rootScope.$on('$locationChangeStart', function (e, newUrl, oldUrl) {
+      console.log('locationChangeStart', oldUrl, newUrl);
+    });
+    rootScope.$on('$locationChangeSuccess', function () {
+      console.log('locationChangeSuccess');
+
+      if (route.current) {
+        if (route.current.params.currentDatabase) messageBroker.pub('current.database', route.current.params.currentDatabase);
+        if (route.current.params.currentCollection) messageBroker.pub('current.collection', route.current.params.currentCollection);
+      }
+    });
+    rootScope.$on('$routeChangeSuccess', function () {
+      console.log('routeChangeSuccess');
+    });
   }]);
   exports.default = app;
 });

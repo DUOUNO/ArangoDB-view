@@ -17,6 +17,7 @@ define(['app'], function (_app) {
     scope.status = 1;
     scope.collections = [];
     scope.currentCollection = '';
+    scope.currentDatabase = '';
 
     scope.setCurrentCollection = function () {
       var _iteratorNormalCompletion = true;
@@ -48,7 +49,7 @@ define(['app'], function (_app) {
     };
 
     scope.reloadCollections = function () {
-      return http.get('/_db/' + messageBroker.last('current.database') + '/_api/collection').then(function (data) {
+      return http.get('/_db/' + scope.currentDatabase + '/_api/collection').then(function (data) {
         scope.collections = data.data.collections;
         scope.setCurrentCollection();
       });
@@ -57,12 +58,19 @@ define(['app'], function (_app) {
     scope.$on('collectionsbar.status', function (e, status) {
       return scope.status = status;
     });
-    scope.$on('collections.reload', scope.reloadCollections);
+    scope.$on('collections.reload', function () {
+      console.log('reload collections');
+      scope.reloadCollections;
+    });
     scope.$on('current.collection', function (e, currentCollection) {
       scope.currentCollection = currentCollection;
       scope.setCurrentCollection();
     });
-    scope.$on('current.database', scope.reloadCollections);
+    scope.$on('current.database', function (e, database) {
+      if (database === scope.currentDatabase) return;
+      scope.currentDatabase = database;
+      scope.reloadCollections();
+    });
   });
 
   _app2.default.controller('collectionsBarController', angularModule);

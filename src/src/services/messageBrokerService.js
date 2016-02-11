@@ -12,7 +12,7 @@ import app from 'app'
 
  let MessageBrokerService = {
     sub: (msgs, scope) => {
-      console.log('sub', msgs);
+      console.log('SUB', msgs);
       for(let msg of msgs.replace(/\+ /g, ' ').trim().split(' ')) {
         (transactions[msg] || (transactions[msg] = [])).push(scope);
         scope.$on('$destroy', () => MessageBrokerService.usub(msg, scope));
@@ -20,7 +20,7 @@ import app from 'app'
     },
 
     pub: (msg, data) => {
-      console.log('pubed', msg, data);
+      console.log('PUB', msg, data);
       lastData[msg] = data;
       if(!transactions[msg]) return;
       for(let scope of transactions[msg]) {
