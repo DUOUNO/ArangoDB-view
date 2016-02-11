@@ -56,3 +56,6 @@ After a short timeout your new rule is automatically saved and applied to the do
 
 ##### edit filter/sort rule
 To edit a rule just type the new rule into the rule input field. The rule is automatically save and applied when you click outside.
+
+##### create new rule from existing rule
+First change the rule name, then edit the rule. The new rule is saved automatically.
