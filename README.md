@@ -16,6 +16,7 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
 * delete documents
 * manage(CRUD) collections / edges
 * run AQL queries
+* link _from / _to
 
 ![interfacescreenshot](images/screen0.png)
 documents overview
