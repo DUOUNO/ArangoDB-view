@@ -23,7 +23,15 @@ define(['app'], function (_app) {
     };
 
     http.get('/_db/_system/_api/version').then(function (data) {
-      return scope.cfg.arango = data.data;
+      scope.cfg.arango = data.data;
+      http.jsonp('https://www.arangodb.com/repositories/versions.php?jsonp=JSON_CALLBACK&version=' + scope.cfg.arango.version + '&callback=JSON_CALLBACK').then(function (data) {
+        var keys = Object.keys(data.data);
+        var version = data.data[keys[0]].version;
+
+        if (version !== scope.cfg.arango.version) {
+          scope.cfg.availableVersion = '(' + version + ' ' + keys[0] + ' available)';
+        }
+      });
     });
     http.get('/_api/database').then(function (data) {
       return scope.cfg.dbs = data.data.result;

@@ -23,7 +23,16 @@ angularModule.push((scope, http, interval, format, messageBroker, location) => {
   scope.changeCollectionsBarStatus = () => {
     scope.collectionsBarStatus++; if(scope.collectionsBarStatus>1)scope.collectionsBarStatus=0; messageBroker.pub('collectionsbar.status', scope.collectionsBarStatus);}
 
-  http.get('/_db/_system/_api/version').then(data => scope.cfg.arango = data.data);
+  http.get('/_db/_system/_api/version').then(data => {
+    scope.cfg.arango = data.data;
+    http.jsonp(`https://www.arangodb.com/repositories/versions.php?jsonp=JSON_CALLBACK&version=${scope.cfg.arango.version}&callback=JSON_CALLBACK`).then(data => {
+      let keys    = Object.keys(data.data);
+      let version = data.data[keys[0]].version;
+      if(version !== scope.cfg.arango.version) {
+        scope.cfg.availableVersion = `(${version} ${keys[0]} available)`;
+      } // if
+    });
+  });
   http.get('/_api/database').then(data => scope.cfg.dbs = data.data.result);
   
   scope.cfg = {};
