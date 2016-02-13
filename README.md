@@ -13,10 +13,10 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
 * next / prev document while in single document view
 
 #### whats next?
-* delete documents
 * manage(CRUD) collections / edges
-* run AQL queries
 * link _from / _to
+* delete documents
+* run AQL queries
 * authentication
 
 ![interfacescreenshot](images/screen0.png)
