@@ -17,6 +17,7 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
 * manage(CRUD) collections / edges
 * run AQL queries
 * link _from / _to
+* authentication
 
 ![interfacescreenshot](images/screen0.png)
 documents overview
@@ -41,6 +42,8 @@ disabled save / view change due to error
 
 
 ### install
+#### mount point
+for now the mount point must be `/view`.
 
 #### filter/sort documents
 ##### create a new filter/sort rule
