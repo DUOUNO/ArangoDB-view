@@ -13,9 +13,11 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
 * next / prev document while in single document view
 
 #### whats next?
-* delete documents
 * manage(CRUD) collections / edges
+* link _from / _to
+* delete documents
 * run AQL queries
+* authentication
 
 ![interfacescreenshot](images/screen0.png)
 documents overview
@@ -40,6 +42,8 @@ disabled save / view change due to error
 
 
 ### install
+#### mount point
+for now the mount point must be `/view`.
 
 #### filter/sort documents
 ##### create a new filter/sort rule
