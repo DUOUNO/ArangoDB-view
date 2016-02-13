@@ -25,7 +25,7 @@ define(['exports', 'angular', 'angular-route', 'angular-animate', 'jsoneditor', 
   var app = angular.module('app', ['ngRoute', 'ngAnimate', 'ng.jsoneditor']);
   app.config(['$routeProvider', '$locationProvider', '$sceDelegateProvider', function (route, locationProvider, sceDelegateProvider) {
     locationProvider.html5Mode(true);
-    route.when('/manage/collections', {
+    route.when('/database/:currentDatabase/manage/collections', {
       controller: 'collectionsController',
       templateUrl: 'manage/collectionsView.html'
     });

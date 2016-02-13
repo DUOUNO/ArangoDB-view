@@ -1,1 +1,30 @@
-abcdef
+<table class="table table-sm">
+<thead>
+  <tr>
+    <td></td><!-- type -->
+    <td></td><!-- loaded? -->
+    <td></td><!-- volatile? -->
+    <td>name</td>
+    <td></td>
+  </tr>
+</thead>
+<tbody>
+  <tr data-ng-repeat="col in collections | orderBy:orderCollection">
+    <td>
+      <i data-ng-if="col.type==3" class="fa fa-share-alt" title="edges"></i>
+      <i data-ng-if="col.type==2" class="fa fa-file-text-o" title="documents"></i>
+    </td>
+    <td>
+      <i data-ng-if="col.status==2" class="fa fa-circle-thin" title="unloaded"></i>
+      <i data-ng-if="col.status==3" title="loaded" class="fa fa-circle"></i>
+      <i data-ng-if="col.status==6" class="fa fa-circle-o-notch"></i>
+    </td>
+    <td>
+      <i data-ng-if="!col.isVolatile" class="fa fa-hdd-o" title="persistent"></i>
+      <i data-ng-if="col.isVolatile" class="fa fa-cloud" title="volatile"></i>
+    </td>
+    <td>{{col.name}}</td>
+    <td><pre>{{col}}</pre></td>
+  </tr>
+</tbody>
+</table>

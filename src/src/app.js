@@ -17,7 +17,7 @@ app.config(['$routeProvider', '$locationProvider', '$sceDelegateProvider', (rout
 
     locationProvider.html5Mode(true)
 
-    route.when('/manage/collections', {
+    route.when('/database/:currentDatabase/manage/collections', {
       controller: 'collectionsController',
       templateUrl: 'manage/collectionsView.html'
     });
