@@ -25,11 +25,12 @@ define(['app'], function (_app) {
     http.get('/_db/_system/_api/version').then(function (data) {
       scope.cfg.arango = data.data;
       http.jsonp('https://www.arangodb.com/repositories/versions.php?jsonp=JSON_CALLBACK&version=' + scope.cfg.arango.version + '&callback=JSON_CALLBACK').then(function (data) {
-        var keys = Object.keys(data.data);
-        var version = data.data[keys[0]].version;
+        scope.cfg.availableVersions = Object.keys(data.data).sort().map(function (key) {
+          return data.data[key].version + ' ' + key;
+        }).join(', ');
 
-        if (version !== scope.cfg.arango.version) {
-          scope.cfg.availableVersion = '(' + version + ' ' + keys[0] + ' available)';
+        if (scope.cfg.availableVersions) {
+          scope.cfg.availableVersions = '(' + scope.cfg.availableVersions + ' available)';
         }
       });
     });

@@ -26,10 +26,9 @@ angularModule.push((scope, http, interval, format, messageBroker, location) => {
   http.get('/_db/_system/_api/version').then(data => {
     scope.cfg.arango = data.data;
     http.jsonp(`https://www.arangodb.com/repositories/versions.php?jsonp=JSON_CALLBACK&version=${scope.cfg.arango.version}&callback=JSON_CALLBACK`).then(data => {
-      let keys    = Object.keys(data.data);
-      let version = data.data[keys[0]].version;
-      if(version !== scope.cfg.arango.version) {
-        scope.cfg.availableVersion = `(${version} ${keys[0]} available)`;
+      scope.cfg.availableVersions = Object.keys(data.data).sort().map( (key) => `${data.data[key].version} ${key}`).join(', ');
+      if(scope.cfg.availableVersions) {
+        scope.cfg.availableVersions = `(${scope.cfg.availableVersions} available)`;
       } // if
     });
   });
@@ -42,8 +41,6 @@ angularModule.push((scope, http, interval, format, messageBroker, location) => {
 
   scope.databaseChanged = () => location.url(`/database/${scope.cfg.selectedDb}`);
 
-  // scope.databaseChanged();
-
   scope.$on('current.database', (e, database) => scope.cfg.selectedDb = database);
   messageBroker.sub('current.database', scope);
 
@@ -53,6 +50,5 @@ angularModule.push((scope, http, interval, format, messageBroker, location) => {
   scope.refreshStats();
   interval(scope.refreshStats, 10 * 1000);
 });
-
 
 app.controller('navBarController', angularModule);
