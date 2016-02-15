@@ -7,6 +7,7 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
 * actually displays right converted bytes (1000B = 1KB)
 * always to your left, collections overview (can be hidden)
 * always to your top, basic infos / stats
+* show all available updates
 * open links in a new tab
 * easily create rules that filter and sort documents
 * pagination is saved when you edit a document and return to documents overview
@@ -17,6 +18,7 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
 * link _from / _to
 * delete documents
 * run AQL queries
+* query log
 * authentication
 
 ![interfacescreenshot](images/screen0.png)
