@@ -40,7 +40,10 @@ editing json in object mode
 editing json in code mode
 
 ![interfacescreenshot](images/screen3.png)
-disabled save / view change due to error 
+disabled save / view change due to error
+
+![interfacescreenshot](images/version1.png)
+show available version for update
 
 
 ### install

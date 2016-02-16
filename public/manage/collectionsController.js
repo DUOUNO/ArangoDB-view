@@ -23,6 +23,7 @@ define(['app'], function (_app) {
     http.get('/_db/' + params.currentDatabase + '/_api/collection').then(function (data) {
       scope.collections = data.data.collections;
       scope.figures = {};
+      scope.indexes = {};
       var qs = scope.collections.map(function (col) {
         col.expanded = false;
 
@@ -53,6 +54,9 @@ define(['app'], function (_app) {
       if (col.status == 3) {
         http.get('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/figures').then(function (data) {
           return scope.figures[col.name] = data.data.figures;
+        });
+        http.get('/_db/' + params.currentDatabase + '/_api/index?collection=' + col.id).then(function (data) {
+          return scope.indexes[col.name] = data.data.indexes;
         });
       } else {
         scope.figures[col.name] = 'not loaded';

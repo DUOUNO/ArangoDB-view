@@ -19,6 +19,7 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
   http.get(`/_db/${params.currentDatabase}/_api/collection`).then(data => {
     scope.collections = data.data.collections;
     scope.figures     = {};
+    scope.indexes     = {};
 
     let qs = scope.collections.map( (col) => {
       col.expanded = false;
@@ -40,6 +41,7 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
     if(!open) return;
     if(col.status == 3) {
       http.get(`/_db/${params.currentDatabase}/_api/collection/${col.name}/figures`).then(data => scope.figures[col.name] = data.data.figures);
+      http.get(`/_db/${params.currentDatabase}/_api/index?collection=${col.id}`).then(data     => scope.indexes[col.name] = data.data.indexes);
     } else {
       scope.figures[col.name] = 'not loaded';
     }

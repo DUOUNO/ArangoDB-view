@@ -36,10 +36,10 @@
 <table class="table table-sm">
   <tbody>
     <tr>
-      <td style="width:120px;">ID:</td>
+      <td style="width:100px;">ID:</td>
       <td>{{col.id}}</td>
 
-      <td style="width:100px;">datafiles</td>
+      <td style="width:120px;">datafiles</td>
       <td>{{figures[col.name].datafiles.count}} / {{format(figures[col.name].datafiles.fileSize, 2, 'it')}}</td>
 
       <td style="width:100px;">shapes</td>
@@ -60,8 +60,11 @@
 
 
     <tr>
-      <td>Journal size</td>
-      <td>{{format(col.journalSize,2,'it')}}</td>
+      <td>Status</td>
+      <td>
+        <span data-ng-if="col.status==2">unloaded <button class="btn btn-sm btn-primary btn-primary-outline">load</button></span>
+        <span data-ng-if="col.status==3">loaded <button class="btn btn-sm btn-primary btn-primary-outline">unload</button></span>
+      </td>
 
       <td>compactors</td>
       <td>{{figures[col.name].compactors.count}} / {{format(figures[col.name].compactors.fileSize, 2, 'it')}}</td>
@@ -72,8 +75,8 @@
 
 
     <tr>
-      <td>Wait for sync</td>
-      <td><label><input type="radio" data-ng-model="col.waitForSync" ng-value="true" /> yes</label> <label><input type="radio" ng-value="false" data-ng-model="col.waitForSync" /> no</label> </td>
+      <td>Journal size</td>
+      <td>{{format(col.journalSize,2,'it')}}</td>
 
       <td>shape files</td>
       <td>{{figures[col.name].shapefiles.count}} / {{format(figures[col.name].shapefiles.fileSize, 2, 'it')}}</td>
@@ -84,19 +87,48 @@
 
 
     <tr>
-      <td>Index buckets</td>
-      <td><select data-ng-model="col.indexBuckets" data-ng-options="Number(key) as key for (key, value) in indexBucketSizes"></select></td>
+      <td>Wait for sync</td>
+      <td><label><input type="radio" data-ng-model="col.waitForSync" ng-value="true" /> yes</label> <label><input type="radio" ng-value="false" data-ng-model="col.waitForSync" /> no</label> </td>
 
-      <td>indexes</td>
-      <td>{{figures[col.name].indexes.count}} / {{format(figures[col.name].indexes.size, 2, 'it')}}</td>
+      <td></td>
+      <td></td>
 
       <td></td>
       <td></td>
     </tr>
+
+
+    <tr>
+      <td>indexes</td>
+      <td>{{figures[col.name].indexes.count}} / {{format(figures[col.name].indexes.size, 2, 'it')}}</td>
+
+      <td>Index buckets</td>
+      <td><select data-ng-model="col.indexBuckets" data-ng-options="Number(key) as key for (key, value) in indexBucketSizes"></select></td>
+
+      <td></td>
+      <td></td>
+    </tr>
+
+    <!-- indexes -->
+    <tr>
+      <td><strong>id</strong></td>
+      <td><strong>type</strong></td>
+      <td><strong>unique</strong></td>
+      <td><strong>sparse</strong></td>
+      <td><strong>selec. est</strong></td>
+      <td><strong>fields</strong></td>
+    </tr>
+    <tr data-ng-repeat="idx in indexes[col.name]">
+      <td>{{idx.id}}</td>
+      <td>{{idx.type}}</td>
+      <td><i data-ng-if="idx.unique" class="fa fa-check"></i></td>
+      <td><i data-ng-if="idx.sparse" class="fa fa-check"></i></td>
+      <td>{{idx.selectivityEstimate}}</td>
+      <td>{{idx.fields}}</td>
+    </tr>
   </tbody>
 </table>
 
-{{col}}
 
     </td>
   </tr>
