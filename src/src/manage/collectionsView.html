@@ -31,70 +31,70 @@
     <td></td>
   </tr>
   <tr data-ng-repeat-end>
-    <td data-ng-if="col.expanded" colspan="5">
+    <td data-ng-if="col.expanded" colspan="100%">
 
-<table class="table">
+<table class="table table-sm">
   <tbody>
     <tr>
-      <td>ID:</td>
+      <td style="width:120px;">ID:</td>
       <td>{{col.id}}</td>
+
+      <td style="width:100px;">datafiles</td>
+      <td>{{figures[col.name].datafiles.count}} / {{format(figures[col.name].datafiles.fileSize, 2, 'it')}}</td>
+
+      <td style="width:100px;">shapes</td>
+      <td>{{figures[col.name].shapes.count}} / {{figures[col.name].shapes.size}} Byte</td>
     </tr>
+
+
     <tr>
       <td>Type:</td>
       <td><span data-ng-if="col.type==3">Edge collection</span><span data-ng-if="col.type==2">Document collection</span></td>
+
+      <td>journals</td>
+      <td>{{figures[col.name].journals.count}} / {{format(figures[col.name].journals.fileSize, 2, 'it')}}</td>
+
+      <td>attributes</td>
+      <td>{{figures[col.name].attributes.count}} / {{figures[col.name].attributes.size}} Byte</td>
     </tr>
+
+
     <tr>
       <td>Journal size</td>
       <td>{{format(col.journalSize,2,'it')}}</td>
+
+      <td>compactors</td>
+      <td>{{figures[col.name].compactors.count}} / {{format(figures[col.name].compactors.fileSize, 2, 'it')}}</td>
+
+      <td>uncollected</td>
+      <td>{{figures[col.name].uncollectedLogfileEntries}}</td>
     </tr>
+
+
     <tr>
       <td>Wait for sync</td>
       <td><label><input type="radio" data-ng-model="col.waitForSync" ng-value="true" /> yes</label> <label><input type="radio" ng-value="false" data-ng-model="col.waitForSync" /> no</label> </td>
+
+      <td>shape files</td>
+      <td>{{figures[col.name].shapefiles.count}} / {{format(figures[col.name].shapefiles.fileSize, 2, 'it')}}</td>
+
+      <td>references</td>
+      <td>{{figures[col.name].documentReferences}}</td>
     </tr>
+
+
     <tr>
       <td>Index buckets</td>
       <td><select data-ng-model="col.indexBuckets" data-ng-options="Number(key) as key for (key, value) in indexBucketSizes"></select></td>
+
+      <td>indexes</td>
+      <td>{{figures[col.name].indexes.count}} / {{format(figures[col.name].indexes.size, 2, 'it')}}</td>
+
+      <td></td>
+      <td></td>
     </tr>
   </tbody>
 </table>
-
-
-<div class="card card-block" style="width: 300px;float:left;">
-<dl class="dl-horizontal">
-  <dt class="col-sm-5">datafiles</dt>
-  <dd class="col-sm-7">{{figures[col.name].datafiles.count}} / {{format(figures[col.name].datafiles.fileSize, 2, 'it')}}</dd>
-
-  <dt class="col-sm-5">journals</dt>
-  <dd class="col-sm-7">{{figures[col.name].journals.count}} / {{format(figures[col.name].journals.fileSize, 2, 'it')}}</dd>
-
-  <dt class="col-sm-5">compactors</dt>
-  <dd class="col-sm-7">{{figures[col.name].compactors.count}} / {{format(figures[col.name].compactors.fileSize, 2, 'it')}}</dd>
-
-  <dt class="col-sm-5">shape files</dt>
-  <dd class="col-sm-7">{{figures[col.name].shapefiles.count}} / {{format(figures[col.name].shapefiles.fileSize, 2, 'it')}}</dd>
-
-  <dt class="col-sm-5">indexes</dt>
-  <dd class="col-sm-7">{{figures[col.name].indexes.count}} / {{format(figures[col.name].indexes.size, 2, 'it')}}</dd>
-</dl>
-</div>
-
-
-
-<div class="card card-block" style="width: 300px;float:left;">
-<dl class="dl-horizontal" ><!-- style="margin-left:0px; width: 500px; float:left;" -->
-  <dt class="col-sm-5">shapes</dt>
-  <dd class="col-sm-7">{{figures[col.name].shapes.count}} / {{figures[col.name].shapes.size}} Byte</dd>
-
-  <dt class="col-sm-5">attributes</dt>
-  <dd class="col-sm-7">{{figures[col.name].attributes.count}} / {{figures[col.name].attributes.size}} Byte</dd>
-
-  <dt class="col-sm-5">uncollected</dt>
-  <dd class="col-sm-7">{{figures[col.name].uncollectedLogfileEntries}}</dd>
-
-  <dt class="col-sm-5">references</dt>
-  <dd class="col-sm-7">{{figures[col.name].documentReferences}}</dd>
-</dl>
-</div>
 
 {{col}}
 
