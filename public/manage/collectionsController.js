@@ -9,12 +9,23 @@ define(['app'], function (_app) {
     };
   }
 
-  var angularModule = ['$scope', '$http', '$routeParams', 'messageBrokerService', '$q'];
-  angularModule.push(function (scope, http, params, messageBroker, q) {
+  var angularModule = ['$scope', '$http', '$routeParams', 'messageBrokerService', 'formatService', '$q'];
+  angularModule.push(function (scope, http, params, messageBroker, formatService, q) {
+    scope.format = formatService;
+    scope.Number = Number;
     messageBroker.pub('current.collection', '');
+    scope.indexBucketSizes = {};
+
+    for (var i = 1; i <= 1024; i = i * 2) {
+      scope.indexBucketSizes[i] = 1;
+    }
+
     http.get('/_db/' + params.currentDatabase + '/_api/collection').then(function (data) {
       scope.collections = data.data.collections;
+      scope.figures = {};
       var qs = scope.collections.map(function (col) {
+        col.expanded = false;
+
         if (col.status == 3) {
           return http.get('/_db/' + params.currentDatabase + '/_api/collection/' + col.id + '/properties');
         } else {
@@ -34,6 +45,16 @@ define(['app'], function (_app) {
 
     scope.orderCollection = function (col) {
       return !col.isSystem + '_' + col.name;
+    };
+
+    scope.getFigures = function (col, open) {
+      if (col.status == 3) {
+        http.get('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/figures').then(function (data) {
+          return scope.figures[col.name] = data.data.figures;
+        });
+      } else {
+        scope.figures[col.name] = 'not loaded';
+      }
     };
   });
 
