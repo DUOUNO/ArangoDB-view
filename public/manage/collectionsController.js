@@ -48,6 +48,8 @@ define(['app'], function (_app) {
     };
 
     scope.getFigures = function (col, open) {
+      if (!open) return;
+
       if (col.status == 3) {
         http.get('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/figures').then(function (data) {
           return scope.figures[col.name] = data.data.figures;

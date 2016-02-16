@@ -37,6 +37,7 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
   scope.orderCollection = (col) => `${!col.isSystem}_${col.name}`;
 
   scope.getFigures = (col, open) => {
+    if(!open) return;
     if(col.status == 3) {
       http.get(`/_db/${params.currentDatabase}/_api/collection/${col.name}/figures`).then(data => scope.figures[col.name] = data.data.figures);
     } else {
