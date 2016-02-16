@@ -6,12 +6,23 @@
 import app from 'app'
 
 
-let angularModule = ['$scope']
+let angularModule = ['$scope', '$http'];
 
-angularModule.push((scope) => {
+angularModule.push((scope, http) => {
 
   console.log('init homeController');
   scope.test = {};
+
+  scope.changelog = '';
+
+  http.get('/_db/_system/_api/version').then(data => {
+    let version = data.data.version;
+    if(0 == version.search(/^\d\.\d\.\d$/)) {
+      version = version.split('.').slice(0,2).join('.');
+    }
+    http.get(`https://raw.githubusercontent.com/arangodb/arangodb/${version}/CHANGELOG`).then(data => scope.changelog = data.data);
+  });
+
 
   // scope.test.selected = 'a';
 
