@@ -53,13 +53,13 @@ define(['app'], function (_app) {
 
       if (col.status == 3) {
         http.get('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/figures').then(function (data) {
-          return scope.figures[col.name] = data.data.figures;
+          return scope.figures[col.id] = data.data.figures;
         });
         http.get('/_db/' + params.currentDatabase + '/_api/index?collection=' + col.id).then(function (data) {
-          return scope.indexes[col.name] = data.data.indexes;
+          return scope.indexes[col.id] = data.data.indexes;
         });
       } else {
-        scope.figures[col.name] = 'not loaded';
+        scope.figures[col.id] = 'not loaded';
       }
     };
   });

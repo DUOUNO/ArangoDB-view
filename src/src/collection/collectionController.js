@@ -19,7 +19,7 @@ angularModule.push((scope, params, http, messageBroker, query, format, fastFilte
 
   scope.rules = fastFilterService.rules;
 
-  scope.fastFilter = {editableRule:scope.rules[messageBroker.last('current.fastFilter')].rule, selectedRule:messageBroker.last('current.fastFilter'), active:messageBroker.last('show.fastFilter'), newFilterName:''};
+  scope.fastFilter = {editableRule:scope.rules[messageBroker.last('current.fastFilter')].rule, selectedRule:messageBroker.last('current.fastFilter'), active:messageBroker.last('show.fastFilter')};
   scope.fastFilterRuleChanged = () => {
     scope.fastFilter.editableRule = scope.rules[scope.fastFilter.selectedRule].rule;
     messageBroker.pub('current.fastFilter', scope.fastFilter.selectedRule);

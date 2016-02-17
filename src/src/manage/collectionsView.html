@@ -35,72 +35,100 @@
 
 <table class="table table-sm">
   <tbody>
+
     <tr>
-      <td style="width:100px;">ID:</td>
-      <td>{{col.id}}</td>
-
-      <td style="width:120px;">datafiles</td>
-      <td>{{figures[col.name].datafiles.count}} / {{format(figures[col.name].datafiles.fileSize, 2, 'it')}}</td>
-
-      <td style="width:100px;">shapes</td>
-      <td>{{figures[col.name].shapes.count}} / {{figures[col.name].shapes.size}} Byte</td>
+      <td colspan="4">
+        <div class="input-group input-group-sm" style="width:100%;">
+          <span class="input-group-addon" id="basic-addon1">Name:</span>
+          <input type="text" data-ng-model="col.name" class="form-control" />
+        </div>
+      </td>
+      <td>Wait for sync</td>
+      <td><label><input type="radio" data-ng-model="col.waitForSync" ng-value="true" /> yes</label> <label><input type="radio" ng-value="false" data-ng-model="col.waitForSync" /> no</label> </td>
     </tr>
 
-
     <tr>
+      <td style="width:120px;">ID:</td>
+      <td>{{col.id}}</td>
       <td>Type:</td>
       <td><span data-ng-if="col.type==3">Edge collection</span><span data-ng-if="col.type==2">Document collection</span></td>
-
-      <td>journals</td>
-      <td>{{figures[col.name].journals.count}} / {{format(figures[col.name].journals.fileSize, 2, 'it')}}</td>
-
-      <td>attributes</td>
-      <td>{{figures[col.name].attributes.count}} / {{figures[col.name].attributes.size}} Byte</td>
-    </tr>
-
-
-    <tr>
-      <td>Status</td>
+      <td>Status:</td>
       <td>
         <span data-ng-if="col.status==2">unloaded <button class="btn btn-sm btn-primary btn-primary-outline">load</button></span>
         <span data-ng-if="col.status==3">loaded <button class="btn btn-sm btn-primary btn-primary-outline">unload</button></span>
       </td>
-
-      <td>compactors</td>
-      <td>{{figures[col.name].compactors.count}} / {{format(figures[col.name].compactors.fileSize, 2, 'it')}}</td>
-
-      <td>uncollected</td>
-      <td>{{figures[col.name].uncollectedLogfileEntries}}</td>
     </tr>
 
+    <tr>
+      <td>Alive <i class="fa fa-files-o" title="alive documents"></i></td>
+      <td>{{figures[col.id].alive.count}}</td>
+      <td>Size</td>
+      <td>{{format(figures[col.id].alive.size, 2, 'it')}}</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Dead <i class="fa fa-files-o" title="dead documents"></i></td>
+      <td>{{figures[col.id].dead.count}}</td>
+      <td>Size</td>
+      <td>{{format(figures[col.id].dead.size, 2, 'it')}}</td>
+      <td>Deletion</td>
+      <td>{{figures[col.id].dead.deletion}}</td>
+    </tr>
 
     <tr>
-      <td>Journal size</td>
+      <td colspan="100%">&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td>Journal size</td> <!-- @todo special angular converter  <input type="number" data-ng-model="col.journalSize"/> -->
       <td>{{format(col.journalSize,2,'it')}}</td>
 
-      <td>shape files</td>
-      <td>{{figures[col.name].shapefiles.count}} / {{format(figures[col.name].shapefiles.fileSize, 2, 'it')}}</td>
+      <td>Attributes</td>
+      <td>{{figures[col.id].attributes.count}} / {{format(figures[col.id].attributes.size, 2, 'it')}}</td>
 
-      <td>references</td>
-      <td>{{figures[col.name].documentReferences}}</td>
+      <td>Compactor files</td>
+      <td>{{figures[col.id].compactors.count}} / {{format(figures[col.id].compactors.fileSize, 2, 'it')}}</td>
     </tr>
 
 
     <tr>
-      <td>Wait for sync</td>
-      <td><label><input type="radio" data-ng-model="col.waitForSync" ng-value="true" /> yes</label> <label><input type="radio" ng-value="false" data-ng-model="col.waitForSync" /> no</label> </td>
+      <td>Journal files</td>
+      <td>{{figures[col.id].journals.count}} / {{format(figures[col.id].journals.fileSize, 2, 'it')}}</td>
 
-      <td></td>
-      <td></td>
 
-      <td></td>
-      <td></td>
+      <td style="width:120px;">Shapes</td>
+      <td>{{figures[col.id].shapes.count}} / {{format(figures[col.id].shapes.size, 2, 'it')}}</td>
+
+      <td>Uncollected</td>
+      <td>{{figures[col.id].uncollectedLogfileEntries}}</td>
     </tr>
 
 
     <tr>
-      <td>indexes</td>
-      <td>{{figures[col.name].indexes.count}} / {{format(figures[col.name].indexes.size, 2, 'it')}}</td>
+      <td style="width:120px;">datafiles</td>
+      <td>{{figures[col.id].datafiles.count}} / {{format(figures[col.id].datafiles.fileSize, 2, 'it')}}</td>
+
+      <td>Shape files</td>
+      <td>{{figures[col.id].shapefiles.count}} / {{format(figures[col.id].shapefiles.fileSize, 2, 'it')}}</td>
+
+      <td>References</td>
+      <td>{{figures[col.id].documentReferences}}</td>
+    </tr>
+
+
+    <tr>
+      <td>&nbsp;</td>
+    </tr>
+
+
+
+
+
+    <!-- indexes -->
+    <tr>
+      <td>Indexes</td>
+      <td>{{figures[col.id].indexes.count}} / {{format(figures[col.id].indexes.size, 2, 'it')}}</td>
 
       <td>Index buckets</td>
       <td><select data-ng-model="col.indexBuckets" data-ng-options="Number(key) as key for (key, value) in indexBucketSizes"></select></td>
@@ -108,8 +136,6 @@
       <td></td>
       <td></td>
     </tr>
-
-    <!-- indexes -->
     <tr>
       <td><strong>id</strong></td>
       <td><strong>type</strong></td>
@@ -118,7 +144,7 @@
       <td><strong>selec. est</strong></td>
       <td><strong>fields</strong></td>
     </tr>
-    <tr data-ng-repeat="idx in indexes[col.name]">
+    <tr data-ng-repeat="idx in indexes[col.id]">
       <td>{{idx.id}}</td>
       <td>{{idx.type}}</td>
       <td><i data-ng-if="idx.unique" class="fa fa-check"></i></td>
@@ -128,6 +154,10 @@
     </tr>
   </tbody>
 </table>
+
+
+
+
 
 
     </td>

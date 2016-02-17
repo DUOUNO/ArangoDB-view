@@ -40,10 +40,10 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
   scope.getFigures = (col, open) => {
     if(!open) return;
     if(col.status == 3) {
-      http.get(`/_db/${params.currentDatabase}/_api/collection/${col.name}/figures`).then(data => scope.figures[col.name] = data.data.figures);
-      http.get(`/_db/${params.currentDatabase}/_api/index?collection=${col.id}`).then(data     => scope.indexes[col.name] = data.data.indexes);
+      http.get(`/_db/${params.currentDatabase}/_api/collection/${col.name}/figures`).then(data => scope.figures[col.id] = data.data.figures);
+      http.get(`/_db/${params.currentDatabase}/_api/index?collection=${col.id}`).then(data     => scope.indexes[col.id] = data.data.indexes);
     } else {
-      scope.figures[col.name] = 'not loaded';
+      scope.figures[col.id] = 'not loaded';
     }
   }
 });

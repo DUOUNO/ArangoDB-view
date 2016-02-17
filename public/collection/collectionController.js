@@ -21,8 +21,7 @@ define(['app'], function (_app) {
     scope.fastFilter = {
       editableRule: scope.rules[messageBroker.last('current.fastFilter')].rule,
       selectedRule: messageBroker.last('current.fastFilter'),
-      active: messageBroker.last('show.fastFilter'),
-      newFilterName: ''
+      active: messageBroker.last('show.fastFilter')
     };
 
     scope.fastFilterRuleChanged = function () {
