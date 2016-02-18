@@ -23,6 +23,7 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
 
     let qs = scope.collections.map( (col) => {
       col.expanded = false;
+      col.editName = col.name;
       if(col.status == 3) {
         return http.get(`/_db/${params.currentDatabase}/_api/collection/${col.id}/properties`)
       } else {

@@ -26,6 +26,7 @@ define(['app'], function (_app) {
       scope.indexes = {};
       var qs = scope.collections.map(function (col) {
         col.expanded = false;
+        col.editName = col.name;
 
         if (col.status == 3) {
           return http.get('/_db/' + params.currentDatabase + '/_api/collection/' + col.id + '/properties');

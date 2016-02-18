@@ -40,7 +40,7 @@
       <td colspan="4">
         <div class="input-group input-group-sm" style="width:100%;">
           <span class="input-group-addon" id="basic-addon1">Name:</span>
-          <input type="text" data-ng-model="col.name" class="form-control" />
+          <input type="text" data-ng-model="col.editName" class="form-control" data-ng-disabled="col.isSystem" />
         </div>
       </td>
       <td>Wait for sync</td>
@@ -64,7 +64,7 @@
       <td>{{figures[col.id].alive.count}}</td>
       <td>Size</td>
       <td>{{format(figures[col.id].alive.size, 2, 'it')}}</td>
-      <td></td>
+      <td><button class="btn btn-sm btn-primary btn-primary-outline" data-ng-disabled="col.isSystem">truncate</button></td>
       <td></td>
     </tr>
     <tr>
