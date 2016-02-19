@@ -46,7 +46,11 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
     } else {
       scope.figures[col.id] = 'not loaded';
     }
-  }
+  };
+
+  scope.doAction = (action) => {
+    console.log(action);
+  };
 });
 
 app.controller('collectionsController', angularModule);

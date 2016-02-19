@@ -63,6 +63,10 @@ define(['app'], function (_app) {
         scope.figures[col.id] = 'not loaded';
       }
     };
+
+    scope.doAction = function (action) {
+      console.log(action);
+    };
   });
 
   _app2.default.controller('collectionsController', angularModule);
