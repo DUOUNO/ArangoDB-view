@@ -48,7 +48,7 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
     }
   };
 
-  scope.doAction = (action) => {
+  scope.doAction = (action, col) => {
     console.log(action);
   };
 });

@@ -64,7 +64,7 @@ define(['app'], function (_app) {
       }
     };
 
-    scope.doAction = function (action) {
+    scope.doAction = function (action, col) {
       console.log(action);
     };
   });
