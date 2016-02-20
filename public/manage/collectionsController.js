@@ -65,7 +65,28 @@ define(['app'], function (_app) {
     };
 
     scope.doAction = function (action, col) {
-      console.log(action);
+      console.log(action, col);
+      var promise = undefined;
+
+      switch (action) {
+        case 'unload':
+          promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/unload');
+          break;
+      }
+
+      promise.then(function (data) {
+        console.log('promise resolved data', data);
+
+        switch (action) {
+          case 'unload':
+            col.status = 2;
+            delete scope.figures[col.id];
+            delete scope.indexes[col.id];
+            messageBroker.pub('collections.reload');
+            col.expanded = false;
+            break;
+        }
+      });
     };
   });
 
