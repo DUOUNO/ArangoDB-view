@@ -22,26 +22,12 @@ define(['app'], function (_app) {
 
     http.get('/_db/' + params.currentDatabase + '/_api/collection').then(function (data) {
       scope.collections = data.data.collections;
-      scope.figures = {};
+      scope.colIds = {};
       scope.indexes = {};
-      var qs = scope.collections.map(function (col) {
+      scope.collections.forEach(function (col) {
         col.expanded = false;
         col.editName = col.name;
-
-        if (col.status == 3) {
-          return http.get('/_db/' + params.currentDatabase + '/_api/collection/' + col.id + '/properties');
-        } else {
-          var d = q.defer();
-          d.resolve({
-            data: {}
-          });
-          return d.promise;
-        }
-      });
-      q.all(qs).then(function (vals) {
-        return vals.forEach(function (res, idx) {
-          return Object.assign(scope.collections[idx], res.data);
-        });
+        scope.colIds[col.id] = col;
       });
     });
 
@@ -49,18 +35,16 @@ define(['app'], function (_app) {
       return !col.isSystem + '_' + col.name;
     };
 
-    scope.getFigures = function (col, open) {
+    scope.getFigures = scope.loadColDetails = function (col, open) {
       if (!open) return;
 
       if (col.status == 3) {
-        http.get('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/figures').then(function (data) {
-          return scope.figures[col.id] = data.data.figures;
+        http.get('/_db/' + params.currentDatabase + '/_api/collection/' + col.id + '/figures').then(function (data) {
+          return Object.assign(scope.colIds[col.id], data.data);
         });
         http.get('/_db/' + params.currentDatabase + '/_api/index?collection=' + col.id).then(function (data) {
           return scope.indexes[col.id] = data.data.indexes;
         });
-      } else {
-        scope.figures[col.id] = 'not loaded';
       }
     };
 
@@ -69,6 +53,12 @@ define(['app'], function (_app) {
       var promise = undefined;
 
       switch (action) {
+        case 'load':
+          promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/load', {
+            count: false
+          });
+          break;
+
         case 'unload':
           promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/unload');
           break;
@@ -78,12 +68,18 @@ define(['app'], function (_app) {
         console.log('promise resolved data', data);
 
         switch (action) {
+          case 'load':
+            console.log('loaded collection', col.name);
+            messageBroker.pub('collections.reload');
+            col.status = 3;
+            scope.loadColDetails(col, true);
+            break;
+
           case 'unload':
             col.status = 2;
-            delete scope.figures[col.id];
+            col.figures = {};
             delete scope.indexes[col.id];
             messageBroker.pub('collections.reload');
-            col.expanded = false;
             break;
         }
       });

@@ -7,7 +7,7 @@
   <tr>
     <td></td><!-- type -->
     <td></td><!-- loaded? -->
-    <td></td><!-- volatile? -->
+    <!-- <td></td> --><!-- volatile? -->
     <td>name</td>
     <td></td>
   </tr>
@@ -23,10 +23,10 @@
       <i data-ng-if="col.status==3" title="loaded" class="fa fa-circle"></i>
       <i data-ng-if="col.status==6" class="fa fa-circle-o-notch"></i>
     </td>
-    <td>
+<!--     <td>
       <i data-ng-if="!col.isVolatile" class="fa fa-hdd-o" title="persistent"></i>
       <i data-ng-if="col.isVolatile" class="fa fa-cloud" title="volatile"></i>
-    </td>
+    </td> -->
     <td>{{col.name}}</td>
     <td></td>
   </tr>
@@ -62,19 +62,19 @@
 
     <tr>
       <td>Alive <i class="fa fa-files-o" title="alive documents"></i></td>
-      <td>{{figures[col.id].alive.count}}</td>
+      <td>{{col.figures.alive.count}}</td>
       <td>Size</td>
-      <td>{{format(figures[col.id].alive.size, 2, 'it')}}</td>
+      <td>{{format(col.figures.alive.size, 2, 'it')}}</td>
       <td><button class="btn btn-sm btn-primary btn-primary-outline" data-ng-disabled="col.isSystem" data-ng-click="doAction('truncate', col)">truncate</button></td>
       <td></td>
     </tr>
     <tr>
       <td>Dead <i class="fa fa-files-o" title="dead documents"></i></td>
-      <td>{{figures[col.id].dead.count}}</td>
+      <td>{{col.figures.dead.count}}</td>
       <td>Size</td>
-      <td>{{format(figures[col.id].dead.size, 2, 'it')}}</td>
+      <td>{{format(col.figures.dead.size, 2, 'it')}}</td>
       <td>Deletion</td>
-      <td>{{figures[col.id].dead.deletion}}</td>
+      <td>{{col.figures.dead.deletion}}</td>
     </tr>
 
     <tr>
@@ -86,37 +86,37 @@
       <td>{{format(col.journalSize,2,'it')}}</td>
 
       <td>Attributes</td>
-      <td>{{figures[col.id].attributes.count}} / {{format(figures[col.id].attributes.size, 2, 'it')}}</td>
+      <td>{{col.figures.attributes.count}} / {{format(col.figures.attributes.size, 2, 'it')}}</td>
 
       <td>Compactor files</td>
-      <td>{{figures[col.id].compactors.count}} / {{format(figures[col.id].compactors.fileSize, 2, 'it')}}</td>
+      <td>{{col.figures.compactors.count}} / {{format(col.figures.compactors.fileSize, 2, 'it')}}</td>
     </tr>
 
 
     <tr>
       <td>Journal files</td>
-      <td>{{figures[col.id].journals.count}} / {{format(figures[col.id].journals.fileSize, 2, 'it')}} 
+      <td>{{col.figures.journals.count}} / {{format(col.figures.journals.fileSize, 2, 'it')}} 
         <button class="btn btn-primary btn-sm btn-primary-outline" data-ng-click="doAction('rotateJournal', col)">rotate</button>
       </td>
 
 
       <td style="width:120px;">Shapes</td>
-      <td>{{figures[col.id].shapes.count}} / {{format(figures[col.id].shapes.size, 2, 'it')}}</td>
+      <td>{{col.figures.shapes.count}} / {{format(col.figures.shapes.size, 2, 'it')}}</td>
 
       <td>Uncollected</td>
-      <td>{{figures[col.id].uncollectedLogfileEntries}}</td>
+      <td>{{col.figures.uncollectedLogfileEntries}}</td>
     </tr>
 
 
     <tr>
       <td style="width:120px;">datafiles</td>
-      <td>{{figures[col.id].datafiles.count}} / {{format(figures[col.id].datafiles.fileSize, 2, 'it')}}</td>
+      <td>{{col.figures.datafiles.count}} / {{format(col.figures.datafiles.fileSize, 2, 'it')}}</td>
 
       <td>Shape files</td>
-      <td>{{figures[col.id].shapefiles.count}} / {{format(figures[col.id].shapefiles.fileSize, 2, 'it')}}</td>
+      <td>{{col.figures.shapefiles.count}} / {{format(col.figures.shapefiles.fileSize, 2, 'it')}}</td>
 
       <td>References</td>
-      <td>{{figures[col.id].documentReferences}}</td>
+      <td>{{col.figures.documentReferences}}</td>
     </tr>
 
 
@@ -128,7 +128,7 @@
     <!-- indexes -->
     <tr>
       <td>Indexes</td>
-      <td>{{figures[col.id].indexes.count}} / {{format(figures[col.id].indexes.size, 2, 'it')}}</td>
+      <td>{{col.figures.indexes.count}} / {{format(col.figures.indexes.size, 2, 'it')}}</td>
 
       <td>Index buckets</td>
       <td><select data-ng-model="col.indexBuckets" data-ng-options="Number(key) as key for (key, value) in indexBucketSizes" data-ng-change="doAction('indexBuckets', col)"></select></td>
