@@ -49,7 +49,12 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
         break;
 
       case 'unload':
-        promise = http.put(`/_db/${params.currentDatabase}/_api/collection/${col.name}/unload`)
+        promise = http.put(`/_db/${params.currentDatabase}/_api/collection/${col.name}/unload`);
+        break;
+
+      case 'truncate':
+        if (! confirm('Really truncate collection?') ) return;
+        promise = http.put(`/_db/${params.currentDatabase}/_api/collection/${col.name}/truncate`);
         break;
     } // switch
 
@@ -67,6 +72,10 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
           col.figures = {};
           delete scope.indexes[col.id];
           messageBroker.pub('collections.reload');
+          break;
+
+        case 'truncate':
+          scope.loadColDetails(col, true);
           break;
       } // switch
     });

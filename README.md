@@ -15,6 +15,7 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
 * management collections / edges
   * navigate to documents
   * load / unload
+  * truncate
 
 #### whats next?
 * manage(CRUD) collections / edges

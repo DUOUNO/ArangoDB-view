@@ -64,6 +64,11 @@ define(['app'], function (_app) {
         case 'unload':
           promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/unload');
           break;
+
+        case 'truncate':
+          if (!confirm('Really truncate collection?')) return;
+          promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/truncate');
+          break;
       }
 
       promise.then(function (data) {
@@ -81,6 +86,10 @@ define(['app'], function (_app) {
             col.figures = {};
             delete scope.indexes[col.id];
             messageBroker.pub('collections.reload');
+            break;
+
+          case 'truncate':
+            scope.loadColDetails(col, true);
             break;
         }
       });
