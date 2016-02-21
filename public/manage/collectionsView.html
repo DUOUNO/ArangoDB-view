@@ -13,7 +13,7 @@
   </tr>
 </thead>
 <tbody>
-  <tr data-ng-repeat-start="col in collections | orderBy:orderCollection" data-ng-click="getFigures(col, col.expanded = !col.expanded)" style="cursor: pointer;">
+  <tr data-ng-repeat-start="col in collections | orderBy:orderCollection" data-ng-click="loadColDetails(col, col.expanded = !col.expanded)" style="cursor: pointer;">
     <td>
       <i data-ng-if="col.type==3" class="fa fa-share-alt" title="edges"></i>
       <i data-ng-if="col.type==2" class="fa fa-file-text-o" title="documents"></i>
@@ -37,12 +37,22 @@
   <strong>Collection not loaded! Load it first.</strong>
 </div>
 
+<div class="alert alert-danger" role="alert" data-ng-if="error.msg != ''">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close" data-ng-click="error.msg=''">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <strong>{{error.msg}}</strong>
+</div>
+
 <table class="table table-sm">
   <tbody>
 
     <tr>
       <td colspan="4">
         <div class="input-group input-group-sm" style="width:100%;">
+          <span class="input-group-btn">
+            <button class="btn btn-secondary" type="button" title="reload collection properties and indexes" data-ng-click="loadColDetails(col,true)"><i class="fa fa-refresh"></i></button>
+          </span>
           <span class="input-group-addon" id="basic-addon1">Name:</span>
           <input type="text" data-ng-model="col.editName" class="form-control" data-ng-disabled="col.isSystem" data-ng-blur="doAction('colName', col)" />
         </div>
@@ -59,8 +69,8 @@
       <td><span data-ng-if="col.type==3">Edge collection</span><span data-ng-if="col.type==2">Document collection</span></td>
       <td>Status:</td>
       <td>
-        <span data-ng-if="col.status==2">unloaded <button class="btn btn-sm btn-primary btn-primary-outline" data-ng-click="doAction('load', col)">load</button></span>
-        <span data-ng-if="col.status==3">loaded <button class="btn btn-sm btn-primary btn-primary-outline"   data-ng-click="doAction('unload', col)">unload</button></span>
+        <span data-ng-if="col.status==2">unloaded <button class="btn btn-sm btn-secondary" data-ng-click="doAction('load', col)">load</button></span>
+        <span data-ng-if="col.status==3">loaded <button class="btn btn-sm btn-secondary"   data-ng-click="doAction('unload', col)">unload</button></span>
       </td>
     </tr>
 
@@ -69,7 +79,7 @@
       <td><a href="database/{{params.currentDatabase}}/collection/{{col.name}}/0/49">{{col.figures.alive.count}} / {{col.count}}</a></td>
       <td>Size</td>
       <td>{{format(col.figures.alive.size, 2, 'it')}}</td>
-      <td><button class="btn btn-sm btn-primary btn-primary-outline" data-ng-disabled="col.isSystem" data-ng-click="doAction('truncate', col)">truncate</button></td>
+      <td><button class="btn btn-sm btn-secondary" data-ng-disabled="col.isSystem" data-ng-click="doAction('truncate', col)">truncate</button></td>
       <td></td>
     </tr>
     <tr>
@@ -100,7 +110,7 @@
     <tr>
       <td>Journal files</td>
       <td>{{col.figures.journals.count}} / {{format(col.figures.journals.fileSize, 2, 'it')}} 
-        <button class="btn btn-primary btn-sm btn-primary-outline" data-ng-click="doAction('rotate', col)">rotate</button>
+        <button class="btn btn-secondary btn-sm" data-ng-click="doAction('rotate', col)">rotate</button>
       </td>
 
 

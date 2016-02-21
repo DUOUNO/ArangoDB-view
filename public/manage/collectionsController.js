@@ -31,12 +31,15 @@ define(['app'], function (_app) {
         scope.colIds[col.id] = col;
       });
     });
+    scope.error = {
+      msg: ''
+    };
 
     scope.orderCollection = function (col) {
       return !col.isSystem + '_' + col.name;
     };
 
-    scope.getFigures = scope.loadColDetails = function (col, open) {
+    scope.loadColDetails = function (col, open) {
       if (!open) return;
 
       if (col.status == 3) {
@@ -97,6 +100,8 @@ define(['app'], function (_app) {
             scope.loadColDetails(col, true);
             break;
         }
+      }, function (err) {
+        scope.error.msg = 'ERRNO: ' + err.data.errorNum + ', ' + err.data.errorMessage;
       });
     };
   });

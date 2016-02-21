@@ -29,9 +29,11 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
     });
   });
 
+  scope.error = {msg:''};
+
   scope.orderCollection = (col) => `${!col.isSystem}_${col.name}`;
 
-  scope.getFigures = scope.loadColDetails = (col, open) => {
+  scope.loadColDetails = (col, open) => {
     if(!open) return;
     if(col.status == 3) {
       http.get(`/_db/${params.currentDatabase}/_api/collection/${col.id}/figures`).then(data => Object.assign(scope.colIds[col.id], data.data));
@@ -83,6 +85,8 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
           scope.loadColDetails(col, true);
           break;
       } // switch
+    }, (err) => {
+      scope.error.msg  = `ERRNO: ${err.data.errorNum}, ${err.data.errorMessage}`;
     });
   };
 });
