@@ -33,6 +33,10 @@
   <tr data-ng-repeat-end>
     <td data-ng-if="col.expanded" colspan="100%">
 
+<div data-ng-if="col.status == 2" class="alert alert-warning" role="alert" style="text-align: center;">
+  <strong>Collection not loaded! Load it first.</strong>
+</div>
+
 <table class="table table-sm">
   <tbody>
 

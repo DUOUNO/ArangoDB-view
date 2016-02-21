@@ -49,6 +49,7 @@ define(['app'], function (_app) {
     };
 
     scope.doAction = function (action, col) {
+      if (col.status == 2 && action != 'load') return;
       console.log(action, col);
       var promise = undefined;
 
@@ -69,7 +70,6 @@ define(['app'], function (_app) {
 
         switch (action) {
           case 'load':
-            console.log('loaded collection', col.name);
             messageBroker.pub('collections.reload');
             col.status = 3;
             scope.loadColDetails(col, true);

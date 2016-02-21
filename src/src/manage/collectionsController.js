@@ -39,6 +39,7 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
   };
 
   scope.doAction = (action, col) => {
+    if(col.status == 2 && action != 'load') return;
     console.log(action, col);
     let promise;
     switch(action) {
@@ -55,7 +56,6 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
       console.log('promise resolved data', data);
       switch(action) {
         case 'load':
-          console.log('loaded collection', col.name);
           messageBroker.pub('collections.reload');
           col.status = 3;
           scope.loadColDetails(col, true);
@@ -66,7 +66,6 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
           col.figures = {};
           delete scope.indexes[col.id];
           messageBroker.pub('collections.reload');
-          // col.expanded = false;
           break;
       } // switch
     });
