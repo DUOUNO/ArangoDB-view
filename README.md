@@ -13,6 +13,7 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
 * pagination is saved when you edit a document and return to documents overview
 * next / prev document while in single document view
 * management collections / edges
+  * reload collection properties / indexes on demand
   * navigate to documents
   * load / unload
   * truncate
