@@ -69,6 +69,10 @@ define(['app'], function (_app) {
           if (!confirm('Really truncate collection?')) return;
           promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/truncate');
           break;
+
+        case 'rotate':
+          promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/rotate');
+          break;
       }
 
       promise.then(function (data) {
@@ -89,6 +93,7 @@ define(['app'], function (_app) {
             break;
 
           case 'truncate':
+          case 'rotate':
             scope.loadColDetails(col, true);
             break;
         }

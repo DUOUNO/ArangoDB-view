@@ -56,6 +56,10 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
         if (! confirm('Really truncate collection?') ) return;
         promise = http.put(`/_db/${params.currentDatabase}/_api/collection/${col.name}/truncate`);
         break;
+
+      case 'rotate':
+        promise = http.put(`/_db/${params.currentDatabase}/_api/collection/${col.name}/rotate`);
+        break;
     } // switch
 
     promise.then( (data) => {
@@ -75,6 +79,7 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
           break;
 
         case 'truncate':
+        case 'rotate':
           scope.loadColDetails(col, true);
           break;
       } // switch
