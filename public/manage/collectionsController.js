@@ -12,6 +12,7 @@ define(['app'], function (_app) {
   var angularModule = ['$scope', '$http', '$routeParams', 'messageBrokerService', 'formatService', '$q'];
   angularModule.push(function (scope, http, params, messageBroker, formatService, q) {
     scope.format = formatService;
+    scope.params = params;
     scope.Number = Number;
     messageBroker.pub('current.collection', '');
     scope.indexBucketSizes = {};

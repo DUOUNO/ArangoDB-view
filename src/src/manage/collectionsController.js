@@ -10,6 +10,7 @@ let angularModule = ['$scope', '$http', '$routeParams', 'messageBrokerService', 
 
 angularModule.push((scope, http, params, messageBroker, formatService, q) => {
   scope.format = formatService;
+  scope.params = params;
   scope.Number = Number;
   messageBroker.pub('current.collection', '');
 
