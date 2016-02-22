@@ -101,7 +101,10 @@ define(['app'], function (_app) {
             break;
         }
       }, function (err) {
-        scope.error.msg = 'ERRNO: ' + err.data.errorNum + ', ' + err.data.errorMessage;
+        return messageBroker.pub(col.id + '-feedback', {
+          msg: 'ERRNO: ' + err.data.errorNum + ', ' + err.data.errorMessage,
+          type: 'danger'
+        });
       });
     };
   });

@@ -85,9 +85,7 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
           scope.loadColDetails(col, true);
           break;
       } // switch
-    }, (err) => {
-      scope.error.msg  = `ERRNO: ${err.data.errorNum}, ${err.data.errorMessage}`;
-    });
+    }, (err) => messageBroker.pub(`${col.id}-feedback`, {msg:`ERRNO: ${err.data.errorNum}, ${err.data.errorMessage}`, type:'danger'}) );
   };
 });
 
