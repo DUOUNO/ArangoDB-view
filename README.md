@@ -13,16 +13,17 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
 * pagination is saved when you edit a document and return to documents overview
 * next / prev document while in single document view
 * management collections / edges
-  * reload collection properties / indexes on demand
+  * reload collection properties and indexes on demand
   * navigate to documents
   * load / unload
   * truncate
   * rotate journal
   * change waitForSync
   * change indexBuckets
+  * rename collection
 
 #### whats next?
-* manage(CRUD) collections / edges
+* add document / edge collection
 * link _from / _to
 * delete documents
 * run AQL queries

@@ -77,6 +77,12 @@ define(['app'], function (_app) {
           promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/rotate');
           break;
 
+        case 'rename':
+          promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/rename', {
+            name: col.editName
+          });
+          break;
+
         case 'indexBuckets':
         case 'waitForSync':
           promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/properties', {
@@ -90,6 +96,11 @@ define(['app'], function (_app) {
         console.log('promise resolved data', data);
 
         switch (action) {
+          case 'rename':
+            messageBroker.pub('collections.reload');
+            scope.loadColDetails(col, true);
+            break;
+
           case 'load':
             messageBroker.pub('collections.reload');
             col.status = 3;
@@ -111,10 +122,16 @@ define(['app'], function (_app) {
             break;
         }
       }, function (err) {
-        return messageBroker.pub(col.id + '-feedback', {
-          msg: 'ERRNO: ' + err.data.errorNum + ', ' + err.data.errorMessage,
+        messageBroker.pub(col.id + '-feedback', {
+          msg: 'ERRNo: ' + err.data.errorNum + ', ' + err.data.errorMessage,
           type: 'danger'
         });
+
+        switch (action) {
+          case 'rename':
+            col.editName = col.name;
+            break;
+        }
       });
     };
   });

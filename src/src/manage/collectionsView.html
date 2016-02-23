@@ -57,7 +57,7 @@
             <button class="btn btn-secondary" type="button" title="reload collection properties and indexes" data-ng-click="loadColDetails(col,true)"><i class="fa fa-refresh"></i></button>
           </span>
           <span class="input-group-addon" id="basic-addon1">Name:</span>
-          <input type="text" data-ng-model="col.editName" class="form-control" data-ng-disabled="col.isSystem" data-ng-blur="doAction('colName', col)" />
+          <input type="text" data-ng-model="col.editName" class="form-control" data-ng-disabled="col.isSystem" data-ng-blur="doAction('rename', col)" />
         </div>
       </td>
       <td>Wait for sync</td>
