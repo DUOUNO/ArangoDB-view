@@ -15,32 +15,39 @@ import app from 'app'
 
       if(str > 1000*1000*1000) {
         str = (str / 1000 / 1000 / 1000).toFixed(fix);
-        if(ext) ext = 'GB';
+        switch(ext) {
+          case 'it':
+            ext = ' GB';
+            break;
+          case 'math':
+            ext = ' G';
+            break;
+        } // switch
       } else if(str > 1000*1000) {
         str = (str / 1000 / 1000).toFixed(fix);
         switch(ext) {
           case 'it':
-            ext = 'MB';
+            ext = ' MB';
             break;
           case 'math':
-            ext = 'M';
+            ext = ' M';
             break;
         } // switch
       } else if(str > 1000) {
         str = (str / 1000).toFixed(fix);
         switch(ext) {
           case 'it':
-            ext = 'KB';
+            ext = ' KB';
             break;
           case 'math':
-            ext = 'K';
+            ext = ' K';
             break;
         } // switch
       } else {
         str = str.toFixed(fix);
         switch(ext) {
           case 'it':
-            ext = 'B';
+            ext = ' B';
             break;
           case 'math':
             ext = '';
