@@ -76,6 +76,14 @@ define(['app'], function (_app) {
         case 'rotate':
           promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/rotate');
           break;
+
+        case 'indexBuckets':
+        case 'waitForSync':
+          promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/properties', {
+            indexBuckets: col.indexBuckets,
+            waitForSync: col.waitForSync
+          });
+          break;
       }
 
       promise.then(function (data) {
@@ -97,6 +105,8 @@ define(['app'], function (_app) {
 
           case 'truncate':
           case 'rotate':
+          case 'indexBuckets':
+          case 'waitForSync':
             scope.loadColDetails(col, true);
             break;
         }

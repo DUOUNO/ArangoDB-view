@@ -62,6 +62,11 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
       case 'rotate':
         promise = http.put(`/_db/${params.currentDatabase}/_api/collection/${col.name}/rotate`);
         break;
+
+      case 'indexBuckets':
+      case 'waitForSync':
+        promise = http.put(`/_db/${params.currentDatabase}/_api/collection/${col.name}/properties`, {indexBuckets:col.indexBuckets, waitForSync:col.waitForSync});
+        break;
     } // switch
 
     promise.then( (data) => {
@@ -82,6 +87,8 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
 
         case 'truncate':
         case 'rotate':
+        case 'indexBuckets':
+        case 'waitForSync':
           scope.loadColDetails(col, true);
           break;
       } // switch

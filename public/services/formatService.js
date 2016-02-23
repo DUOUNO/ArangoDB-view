@@ -19,17 +19,26 @@ define(['app'], function (_app) {
 
       if (str > 1000 * 1000 * 1000) {
         str = (str / 1000 / 1000 / 1000).toFixed(fix);
-        if (ext) ext = 'GB';
+
+        switch (ext) {
+          case 'it':
+            ext = ' GB';
+            break;
+
+          case 'math':
+            ext = ' G';
+            break;
+        }
       } else if (str > 1000 * 1000) {
         str = (str / 1000 / 1000).toFixed(fix);
 
         switch (ext) {
           case 'it':
-            ext = 'MB';
+            ext = ' MB';
             break;
 
           case 'math':
-            ext = 'M';
+            ext = ' M';
             break;
         }
       } else if (str > 1000) {
@@ -37,11 +46,11 @@ define(['app'], function (_app) {
 
         switch (ext) {
           case 'it':
-            ext = 'KB';
+            ext = ' KB';
             break;
 
           case 'math':
-            ext = 'K';
+            ext = ' K';
             break;
         }
       } else {
@@ -49,7 +58,7 @@ define(['app'], function (_app) {
 
         switch (ext) {
           case 'it':
-            ext = 'B';
+            ext = ' B';
             break;
 
           case 'math':
