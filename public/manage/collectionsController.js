@@ -27,13 +27,9 @@ define(['app'], function (_app) {
       scope.indexes = {};
       scope.collections.forEach(function (col) {
         col.expanded = false;
-        col.editName = col.name;
         scope.colIds[col.id] = col;
       });
     });
-    scope.error = {
-      msg: ''
-    };
 
     scope.orderCollection = function (col) {
       return !col.isSystem + '_' + col.name;
@@ -44,7 +40,10 @@ define(['app'], function (_app) {
 
       if (col.status == 3) {
         http.get('/_db/' + params.currentDatabase + '/_api/collection/' + col.id + '/figures').then(function (data) {
-          return Object.assign(scope.colIds[col.id], data.data);
+          Object.assign(scope.colIds[col.id], data.data);
+          col.editName = col.name;
+          col.journalSize2 = col.journalSize;
+          col.journalSize10 = col.journalSize;
         });
         http.get('/_db/' + params.currentDatabase + '/_api/index?collection=' + col.id).then(function (data) {
           return scope.indexes[col.id] = data.data.indexes;
@@ -85,11 +84,12 @@ define(['app'], function (_app) {
 
         case 'indexBuckets':
         case 'waitForSync':
-        case 'journalSize':
+        case 'journalSize2':
+        case 'journalSize10':
           promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/properties', {
             indexBuckets: col.indexBuckets,
             waitForSync: col.waitForSync,
-            journalSize: col.journalSize
+            journalSize: action == 'journalSize2' ? col.journalSize2 : col.journalSize10
           });
           break;
       }
@@ -120,7 +120,8 @@ define(['app'], function (_app) {
           case 'rotate':
           case 'indexBuckets':
           case 'waitForSync':
-          case 'journalSize':
+          case 'journalSize2':
+          case 'journalSize10':
             scope.loadColDetails(col, true);
             break;
         }

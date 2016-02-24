@@ -24,19 +24,21 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
 
     scope.collections.forEach((col) => {
       col.expanded = false;
-      col.editName = col.name;
       scope.colIds[col.id] = col;
     });
   });
-
-  scope.error = {msg:''};
 
   scope.orderCollection = (col) => `${!col.isSystem}_${col.name}`;
 
   scope.loadColDetails = (col, open) => {
     if(!open) return;
     if(col.status == 3) {
-      http.get(`/_db/${params.currentDatabase}/_api/collection/${col.id}/figures`).then(data => Object.assign(scope.colIds[col.id], data.data));
+      http.get(`/_db/${params.currentDatabase}/_api/collection/${col.id}/figures`).then(data => {
+        Object.assign(scope.colIds[col.id], data.data);
+        col.editName      = col.name;
+        col.journalSize2  = col.journalSize;
+        col.journalSize10 = col.journalSize;
+      });
       http.get(`/_db/${params.currentDatabase}/_api/index?collection=${col.id}`).then(data   => scope.indexes[col.id] = data.data.indexes);
     } // if
   };
@@ -69,11 +71,12 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
 
       case 'indexBuckets':
       case 'waitForSync':
-      case 'journalSize':
+      case 'journalSize2':
+      case 'journalSize10':
         promise = http.put(`/_db/${params.currentDatabase}/_api/collection/${col.name}/properties`, {
             indexBuckets : col.indexBuckets,
             waitForSync  : col.waitForSync,
-            journalSize  : col.journalSize});
+            journalSize  : action == 'journalSize2' ? col.journalSize2 : col.journalSize10});
         break;
     } // switch
 
@@ -102,7 +105,8 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
         case 'rotate':
         case 'indexBuckets':
         case 'waitForSync':
-        case 'journalSize':
+        case 'journalSize2':
+        case 'journalSize10':
           scope.loadColDetails(col, true);
           break;
       } // switch

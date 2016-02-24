@@ -18,7 +18,7 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
   * load / unload
   * truncate
   * rotate journal
-  * change journal size
+  * change journal size in MiB and MB
   * change waitForSync
   * change indexBuckets
   * rename collection

@@ -3,15 +3,6 @@
 </div>
 
 <table class="table table-sm">
-<thead>
-  <tr>
-    <td></td><!-- type -->
-    <td></td><!-- loaded? -->
-    <!-- <td></td> --><!-- volatile? -->
-    <td>name</td>
-    <td></td>
-  </tr>
-</thead>
 <tbody>
   <tr data-ng-repeat-start="col in collections | orderBy:orderCollection" data-ng-click="loadColDetails(col, col.expanded = !col.expanded)" style="cursor: pointer;">
     <td>
@@ -37,15 +28,7 @@
   <strong>Collection not loaded! Load it first.</strong>
 </div>
 
-
 <feedback-msgs data-test="{{col.id}}-feedback"></feedback-msgs>
-
-<div class="alert alert-danger" role="alert" data-ng-if="error.msg != ''">
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close" data-ng-click="error.msg=''">
-    <span aria-hidden="true">&times;</span>
-  </button>
-  <strong>{{error.msg}}</strong>
-</div>
 
 <table class="table table-sm table-hover">
   <tbody>
@@ -95,14 +78,21 @@
     </tr>
 
     <tr>
-      <td colspan="100%">&nbsp;</td>
+      <td>Journal size</td>
+      <td>
+        <div class="input-group input-group-sm">
+          <input class="form-control" type="number" journal-size base="2" data-ng-model="col.journalSize2" data-ng-blur="doAction('journalSize2', col)"/>
+          <div class="input-group-addon input-group-addon-sm">MiB</div>
+        </div>
+      </td>
+      <td colspan="4"></td>
     </tr>
 
     <tr>
       <td>Journal size</td>
       <td>
         <div class="input-group input-group-sm">
-          <input class="form-control" type="number" journal-size data-ng-model="col.journalSize" data-ng-blur="doAction('journalSize', col)"/>
+          <input class="form-control" type="number" journal-size base="10" data-ng-model="col.journalSize10" data-ng-blur="doAction('journalSize10', col)"/>
           <div class="input-group-addon input-group-addon-sm">MB</div>
         </div>
       </td>

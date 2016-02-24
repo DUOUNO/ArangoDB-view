@@ -15,19 +15,18 @@ define(['app'], function (_app) {
       restrict: 'A',
       require: '?ngModel',
       scope: {
-        listenTo: '@test'
+        base: '@'
       },
       link: function link(scope, element, attrs, ngModel) {
         if (!ngModel) return;
-        console.log(ngModel);
         ngModel.$formatters.push(function (value) {
           if (!isNaN(value)) {
-            return value / 1000 / 1000;
+            if (scope.base == '10') return value / 1000 / 1000;else return value / 1024 / 1024;
           }
         });
         ngModel.$parsers.push(function (value) {
           if (isNaN(value)) return;
-          return value * 1000 * 1000;
+          if (scope.base == '10') return value * 1000 * 1000;else return value * 1024 * 1024;
         });
       }
     };
