@@ -85,9 +85,11 @@ define(['app'], function (_app) {
 
         case 'indexBuckets':
         case 'waitForSync':
+        case 'journalSize':
           promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/properties', {
             indexBuckets: col.indexBuckets,
-            waitForSync: col.waitForSync
+            waitForSync: col.waitForSync,
+            journalSize: col.journalSize
           });
           break;
       }
@@ -118,6 +120,7 @@ define(['app'], function (_app) {
           case 'rotate':
           case 'indexBuckets':
           case 'waitForSync':
+          case 'journalSize':
             scope.loadColDetails(col, true);
             break;
         }
@@ -126,12 +129,7 @@ define(['app'], function (_app) {
           msg: 'ERRNo: ' + err.data.errorNum + ', ' + err.data.errorMessage,
           type: 'danger'
         });
-
-        switch (action) {
-          case 'rename':
-            col.editName = col.name;
-            break;
-        }
+        scope.loadColDetails(col, true);
       });
     };
   });

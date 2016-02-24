@@ -16,23 +16,18 @@ angularDirective.push(() => {
       listenTo: '@test'
     },
     link: (scope, element, attrs, ngModel) => {
-      console.log('journalSize link init');
-
       if (!ngModel) return;
 
       console.log(ngModel);
 
       ngModel.$formatters.push((value) => {
         if( !isNaN(value)) {
-          console.log('format value', value);
           return value/1000/1000;
         }
-        
       });
 
       ngModel.$parsers.push((value) => {
-        console.log('parse value', value);
-
+        if (isNaN(value)) return;
         return value*1000*1000
       });
     }

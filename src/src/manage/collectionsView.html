@@ -99,8 +99,13 @@
     </tr>
 
     <tr>
-      <td>Journal size</td> <!-- @todo special angular converter  <input type="number" data-ng-model="col.journalSize"/> -->
-      <td>{{format(col.journalSize,2,'it')}}</td>
+      <td>Journal size</td>
+      <td>
+        <div class="input-group input-group-sm">
+          <input class="form-control" type="number" journal-size data-ng-model="col.journalSize" data-ng-blur="doAction('journalSize', col)"/>
+          <div class="input-group-addon input-group-addon-sm">MB</div>
+        </div>
+      </td>
 
       <td>Attributes</td>
       <td>{{col.figures.attributes.count}} / {{format(col.figures.attributes.size, 2, 'it')}}</td>

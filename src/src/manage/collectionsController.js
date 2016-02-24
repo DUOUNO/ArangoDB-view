@@ -69,7 +69,11 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
 
       case 'indexBuckets':
       case 'waitForSync':
-        promise = http.put(`/_db/${params.currentDatabase}/_api/collection/${col.name}/properties`, {indexBuckets:col.indexBuckets, waitForSync:col.waitForSync});
+      case 'journalSize':
+        promise = http.put(`/_db/${params.currentDatabase}/_api/collection/${col.name}/properties`, {
+            indexBuckets : col.indexBuckets,
+            waitForSync  : col.waitForSync,
+            journalSize  : col.journalSize});
         break;
     } // switch
 
@@ -98,16 +102,13 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
         case 'rotate':
         case 'indexBuckets':
         case 'waitForSync':
+        case 'journalSize':
           scope.loadColDetails(col, true);
           break;
       } // switch
     }, (err) => {
       messageBroker.pub(`${col.id}-feedback`, {msg:`ERRNo: ${err.data.errorNum}, ${err.data.errorMessage}`, type:'danger'});
-      switch(action) {
-        case 'rename':
-          col.editName = col.name;
-          break;
-      }
+      scope.loadColDetails(col, true);
     });
   };
 });

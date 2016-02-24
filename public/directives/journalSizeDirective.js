@@ -18,17 +18,15 @@ define(['app'], function (_app) {
         listenTo: '@test'
       },
       link: function link(scope, element, attrs, ngModel) {
-        console.log('journalSize link init');
         if (!ngModel) return;
         console.log(ngModel);
         ngModel.$formatters.push(function (value) {
           if (!isNaN(value)) {
-            console.log('format value', value);
             return value / 1000 / 1000;
           }
         });
         ngModel.$parsers.push(function (value) {
-          console.log('parse value', value);
+          if (isNaN(value)) return;
           return value * 1000 * 1000;
         });
       }
