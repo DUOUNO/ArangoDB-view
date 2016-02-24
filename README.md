@@ -4,7 +4,7 @@
 ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/arangodb). Its based on a flex design.
 
 #### features
-* actually displays right converted bytes (1000B = 1KB)
+* actually displays right converted bytes (1000 B = 1 KB)
 * always to your left, collections overview (can be hidden)
 * always to your top, basic infos / stats
 * show all available updates
