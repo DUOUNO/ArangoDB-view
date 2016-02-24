@@ -59,7 +59,9 @@ requirejs(['jquery', 'angular',  'app', 'ngjsoneditor',
   'services/formatService',
   'services/fastFilterService',
   'services/testService',
-  'directives/feedbackDirective' ], ($) => {
+
+  'directives/feedbackDirective',
+  'directives/journalSizeDirective' ], ($) => {
   $.ajaxSetup({cache:false});
 
   angular.bootstrap(document, ['app']);

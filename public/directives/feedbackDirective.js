@@ -21,9 +21,7 @@ define(['app'], function (_app) {
       },
       template: '<div data-ng-repeat="msg in msgs" class="alert alert-success"  data-ng-class="\'alert-\'+msg.type" role="alert"><center><strong>{{msg.msg}}</strong></center></div>',
       controller: ['$scope', '$timeout', 'messageBrokerService', function (scope, timeout, messageBroker) {
-        console.log('feedbackMsgs controller init');
         scope.msgs = [];
-        console.log(scope);
         messageBroker.sub(scope.listenTo, scope);
         scope.$on(scope.listenTo, function (ev, msg) {
           msg = Object.assign({
