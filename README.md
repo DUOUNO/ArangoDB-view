@@ -33,7 +33,6 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
     * index buckets
 
 #### whats next?
-* add document / edge collection
 * link _from / _to
 * delete documents
 * run AQL queries
