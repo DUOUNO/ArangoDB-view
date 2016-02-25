@@ -22,6 +22,15 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
   * change waitForSync
   * change indexBuckets
   * rename collection
+  * create new collections specify
+    * name
+    * type
+    * wait for sync y/n
+    * volatile y/n
+    * system collection y/n
+    * compaction y/n
+    * journal size
+    * index buckets
 
 #### whats next?
 * add document / edge collection

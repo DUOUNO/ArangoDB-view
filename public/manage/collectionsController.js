@@ -15,21 +15,35 @@ define(['app'], function (_app) {
     scope.params = params;
     scope.Number = Number;
     messageBroker.pub('current.collection', '');
+    scope.showNewColForm = false;
+    scope.newCol = {
+      type: 2,
+      waitForSync: true,
+      isVolatile: false,
+      indexBuckets: 8,
+      isSystem: false,
+      doCompact: true,
+      journalSize: 1024 * 1024 * 32
+    };
     scope.indexBucketSizes = {};
 
     for (var i = 1; i <= 1024; i = i * 2) {
       scope.indexBucketSizes[i] = 1;
     }
 
-    http.get('/_db/' + params.currentDatabase + '/_api/collection').then(function (data) {
-      scope.collections = data.data.collections;
-      scope.colIds = {};
-      scope.indexes = {};
-      scope.collections.forEach(function (col) {
-        col.expanded = false;
-        scope.colIds[col.id] = col;
+    scope.reloadCollections = function () {
+      http.get('/_db/' + params.currentDatabase + '/_api/collection').then(function (data) {
+        scope.collections = data.data.collections;
+        scope.colIds = {};
+        scope.indexes = {};
+        scope.collections.forEach(function (col) {
+          col.expanded = false;
+          scope.colIds[col.id] = col;
+        });
       });
-    });
+    };
+
+    scope.reloadCollections();
 
     scope.orderCollection = function (col) {
       return !col.isSystem + '_' + col.name;
@@ -51,9 +65,15 @@ define(['app'], function (_app) {
       }
     };
 
+    scope.createNewCollection = function () {
+      return http.post('/_db/' + params.currentDatabase + '/_api/collection', scope.newCol).then(function (data) {
+        scope.reloadCollections();
+        messageBroker.pub('collections.reload');
+      });
+    };
+
     scope.doAction = function (action, col) {
       if (col.status == 2 && action != 'load') return;
-      console.log(action, col);
       var promise = undefined;
 
       switch (action) {
@@ -95,8 +115,6 @@ define(['app'], function (_app) {
       }
 
       promise.then(function (data) {
-        console.log('promise resolved data', data);
-
         switch (action) {
           case 'rename':
             messageBroker.pub('collections.reload');

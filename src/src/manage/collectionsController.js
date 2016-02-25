@@ -13,20 +13,25 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
   scope.params = params;
   scope.Number = Number;
   messageBroker.pub('current.collection', '');
+  scope.showNewColForm = false;
+  scope.newCol = {type:2, waitForSync:true, isVolatile:false,indexBuckets:8, isSystem:false, doCompact:true, journalSize:1024*1024*32};
 
   scope.indexBucketSizes = {};
   for(let i = 1; i <= 1024; i=i*2) scope.indexBucketSizes[i] = 1;
 
-  http.get(`/_db/${params.currentDatabase}/_api/collection`).then(data => {
-    scope.collections = data.data.collections;
-    scope.colIds      = {}; // map colId to collections[]
-    scope.indexes     = {};
+  scope.reloadCollections = () => {
+    http.get(`/_db/${params.currentDatabase}/_api/collection`).then(data => {
+      scope.collections = data.data.collections;
+      scope.colIds      = {}; // map colId to collections[]
+      scope.indexes     = {};
 
-    scope.collections.forEach((col) => {
-      col.expanded = false;
-      scope.colIds[col.id] = col;
+      scope.collections.forEach((col) => {
+        col.expanded = false;
+        scope.colIds[col.id] = col;
+      });
     });
-  });
+  }
+  scope.reloadCollections();
 
   scope.orderCollection = (col) => `${!col.isSystem}_${col.name}`;
 
@@ -43,9 +48,14 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
     } // if
   };
 
+  scope.createNewCollection = () =>
+    http.post(`/_db/${params.currentDatabase}/_api/collection`, scope.newCol).then(data => {
+      scope.reloadCollections();
+      messageBroker.pub('collections.reload');
+    });
+
   scope.doAction = (action, col) => {
     if(col.status == 2 && action != 'load') return;
-    console.log(action, col);
     let promise;
     switch(action) {
       case 'load':
@@ -81,7 +91,6 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
     } // switch
 
     promise.then( (data) => {
-      console.log('promise resolved data', data);
       switch(action) {
         case 'rename':
           messageBroker.pub('collections.reload');

@@ -2,6 +2,99 @@
   Changes are instantly applied. Textinputs on blur, select and radio buttons on selection change.
 </div>
 
+<button type="button" class="btn btn-secondary btn-block" style="margin-bottom:10px;" data-ng-click="showNewColForm = !showNewColForm">show / hide Add Collection</button>
+
+<form data-ng-if="showNewColForm" style="margin-left:10px;">
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 form-control-label">Collection Name</label>
+    <div class="col-sm-10">
+      <input type="text" data-ng-model="newCol.name" class="form-control" />
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-sm-2">Collection Type</label>
+    <div class="col-sm-10">
+      <div class="radio">
+        <label><input type="radio" data-ng-model="newCol.type" ng-value="2"  /> Document</label>
+        <label><input type="radio" data-ng-model="newCol.type" ng-value="3" /> Edge</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-sm-2">wait for fsync</label>
+    <div class="col-sm-10">
+      <div class="radio">
+        <label><input type="radio" data-ng-model="newCol.waitForSync" ng-value="true"  /> yes</label>
+        <label><input type="radio" data-ng-model="newCol.waitForSync" ng-value="false" /> no</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-sm-2">volatile collection</label>
+    <div class="col-sm-10">
+      <div class="radio">
+        <label><input type="radio" data-ng-model="newCol.isVolatile" ng-value="false" /> no</label>
+        <label><input type="radio" data-ng-model="newCol.isVolatile" ng-value="true"  /> yes</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-sm-2">system collection</label>
+    <div class="col-sm-10">
+      <div class="radio">
+        <label><input type="radio" data-ng-model="newCol.isSystem" ng-value="false"  /> no</label>
+        <label><input type="radio" data-ng-model="newCol.isSystem" ng-value="true"  /> yes</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-sm-2">compact collection</label>
+    <div class="col-sm-10">
+      <div class="radio">
+        <label><input type="radio" data-ng-model="newCol.doCompact" ng-value="true"  /> yes</label>
+        <label><input type="radio" data-ng-model="newCol.doCompact" ng-value="false"  /> no</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 form-control-label">Journal size</label>
+    <div class="col-sm-10">
+        <div class="input-group input-group-sm">
+          <input class="form-control" type="number" step="any" journal-size base="2" data-ng-model="newCol.journalSize" />
+          <div class="input-group-addon input-group-addon-sm">MiB</div>
+        </div>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <div class="col-sm-offset-2 col-sm-10">
+        <div class="input-group input-group-sm">
+          <input class="form-control" type="number" step="any" journal-size base="10" data-ng-model="newCol.journalSize" />
+          <div class="input-group-addon input-group-addon-sm">MB</div>
+        </div>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-sm-2">index buckets</label>
+    <div class="col-sm-10">
+      <select data-ng-model="newCol.indexBuckets" data-ng-options="Number(key) as key for (key, value) in indexBucketSizes"></select>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-secondary" data-ng-click="createNewCollection()">create collection</button>
+    </div>
+  </div>
+</form>
+
 <table class="table table-sm">
 <tbody>
   <tr data-ng-repeat-start="col in collections | orderBy:orderCollection" data-ng-click="loadColDetails(col, col.expanded = !col.expanded)" style="cursor: pointer;">
@@ -81,18 +174,21 @@
       <td>Journal size</td>
       <td>
         <div class="input-group input-group-sm">
-          <input class="form-control" type="number" journal-size base="2" data-ng-model="col.journalSize2" data-ng-blur="doAction('journalSize2', col)"/>
+          <input class="form-control" type="number" step="any" journal-size base="2" data-ng-model="col.journalSize2" data-ng-blur="doAction('journalSize2', col)"/>
           <div class="input-group-addon input-group-addon-sm">MiB</div>
         </div>
       </td>
-      <td colspan="4"></td>
+      <td>volatile</td>
+      <td>{{col.isVolatile}}</td>
+      <td>system collection</td>
+      <td>{{col.isSystem}}</td>
     </tr>
 
     <tr>
       <td>Journal size</td>
       <td>
         <div class="input-group input-group-sm">
-          <input class="form-control" type="number" journal-size base="10" data-ng-model="col.journalSize10" data-ng-blur="doAction('journalSize10', col)"/>
+          <input class="form-control" type="number" step="any" journal-size base="10" data-ng-model="col.journalSize10" data-ng-blur="doAction('journalSize10', col)"/>
           <div class="input-group-addon input-group-addon-sm">MB</div>
         </div>
       </td>
@@ -166,10 +262,6 @@
     </tr>
   </tbody>
 </table>
-
-
-
-
 
 
     </td>
