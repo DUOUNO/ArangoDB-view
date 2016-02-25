@@ -95,7 +95,7 @@
   </div>
 </form>
 
-<table class="table table-sm">
+<table class="table table-sm table-hover">
 <tbody>
   <tr data-ng-repeat-start="col in collections | orderBy:orderCollection" data-ng-click="loadColDetails(col, col.expanded = !col.expanded)" style="cursor: pointer;">
     <td>
@@ -112,7 +112,7 @@
       <i data-ng-if="col.isVolatile" class="fa fa-cloud" title="volatile"></i>
     </td> -->
     <td>{{col.name}}</td>
-    <td></td>
+    <td><button class="btn btn-secondary btn-sm" title="delete collection {{col.name}}" data-ng-click="dropCol(col, $event)"><i class="fa fa-trash"></i></button></td>
   </tr>
   <tr data-ng-repeat-end data-ng-if="col.expanded">
     <td colspan="100%">

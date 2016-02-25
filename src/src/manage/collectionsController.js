@@ -124,6 +124,15 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
       scope.loadColDetails(col, true);
     });
   };
+
+  scope.dropCol = (col, ev) => {
+    ev.stopPropagation();
+    if (! confirm(`delete collection ${col.name}?`)) return;
+    http.delete(`/_db/${params.currentDatabase}/_api/collection/${col.name}`).then(() => {
+      scope.reloadCollections();
+      messageBroker.pub('collections.reload');
+    });
+  }
 });
 
 app.controller('collectionsController', angularModule);
