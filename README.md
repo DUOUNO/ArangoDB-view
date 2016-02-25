@@ -64,6 +64,13 @@ disabled save / view change due to error
 ![interfacescreenshot](images/version1.png)
 show available version for update
 
+![interfacescreenshot](images/create1.png)
+create new collection
+
+![interfacescreenshot](images/manage1.png)
+manage a collection
+
+
 
 ### install
 #### mount point

@@ -23,7 +23,7 @@
   </div>
 
   <div class="form-group row">
-    <label class="col-sm-2">wait for fsync</label>
+    <label class="col-sm-2">Wait for fsync</label>
     <div class="col-sm-10">
       <div class="radio">
         <label><input type="radio" data-ng-model="newCol.waitForSync" ng-value="true"  /> yes</label>
@@ -33,7 +33,7 @@
   </div>
 
   <div class="form-group row">
-    <label class="col-sm-2">volatile collection</label>
+    <label class="col-sm-2">Volatile Collection</label>
     <div class="col-sm-10">
       <div class="radio">
         <label><input type="radio" data-ng-model="newCol.isVolatile" ng-value="false" /> no</label>
@@ -43,7 +43,7 @@
   </div>
 
   <div class="form-group row">
-    <label class="col-sm-2">system collection</label>
+    <label class="col-sm-2">System Collection</label>
     <div class="col-sm-10">
       <div class="radio">
         <label><input type="radio" data-ng-model="newCol.isSystem" ng-value="false"  /> no</label>
@@ -53,7 +53,7 @@
   </div>
 
   <div class="form-group row">
-    <label class="col-sm-2">compact collection</label>
+    <label class="col-sm-2">Compact Collection</label>
     <div class="col-sm-10">
       <div class="radio">
         <label><input type="radio" data-ng-model="newCol.doCompact" ng-value="true"  /> yes</label>
@@ -82,7 +82,7 @@
   </div>
 
   <div class="form-group row">
-    <label class="col-sm-2">index buckets</label>
+    <label class="col-sm-2">Index buckets</label>
     <div class="col-sm-10">
       <select data-ng-model="newCol.indexBuckets" data-ng-options="Number(key) as key for (key, value) in indexBucketSizes"></select>
     </div>
@@ -90,7 +90,7 @@
 
   <div class="form-group row">
     <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-secondary" data-ng-click="createNewCollection()">create collection</button>
+      <button type="submit" class="btn btn-secondary" data-ng-click="createNewCollection()">Create Collection</button>
     </div>
   </div>
 </form>
@@ -133,7 +133,7 @@
             <button class="btn btn-secondary" type="button" title="reload collection properties and indexes" data-ng-click="loadColDetails(col,true)"><i class="fa fa-refresh"></i></button>
           </span>
           <span class="input-group-addon" id="basic-addon1">Name:</span>
-          <input type="text" data-ng-model="col.editName" class="form-control" data-ng-disabled="col.isSystem" data-ng-blur="doAction('rename', col)" />
+          <input type="text" data-ng-model="col.editName" class="form-control" data-ng-blur="doAction('rename', col)" />
         </div>
       </td>
       <td>Wait for sync</td>
@@ -158,7 +158,7 @@
       <td><a href="database/{{params.currentDatabase}}/collection/{{col.name}}/0/49">{{col.figures.alive.count}} / {{col.count}}</a></td>
       <td>Size</td>
       <td>{{format(col.figures.alive.size, 2, 'it')}}</td>
-      <td><button class="btn btn-sm btn-secondary" data-ng-disabled="col.isSystem" data-ng-click="doAction('truncate', col)">truncate</button></td>
+      <td><button class="btn btn-sm btn-secondary" data-ng-click="doAction('truncate', col)">truncate</button></td>
       <td></td>
     </tr>
     <tr>
