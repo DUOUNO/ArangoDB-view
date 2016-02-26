@@ -40,6 +40,9 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
 * query log
 * authentication
 
+![interfacescreenshot](images/explained0.png)
+
+
 ![interfacescreenshot](images/screen0.png)
 documents overview
 
