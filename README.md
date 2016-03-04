@@ -32,11 +32,13 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
     * journal size in MiB and MB
     * index buckets
   * delete collections
+* AQL queries
+ * execute queries while you type them, with a timeout or when you leave the AQL-editor
 
 #### whats next?
 * link _from / _to
 * delete documents
-* run AQL queries
+* save AQL queries
 * query log
 * authentication
 
