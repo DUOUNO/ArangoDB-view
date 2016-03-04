@@ -34,6 +34,7 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
   * delete collections
 * AQL queries
  * execute queries while you type them, with a timeout or when you leave the AQL-editor
+ * configure how many docs are teturned; from 1 to n, without restrictions
 
 #### whats next?
 * link _from / _to
