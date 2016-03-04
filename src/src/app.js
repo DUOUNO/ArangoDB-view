@@ -33,10 +33,18 @@ app.config(['$routeProvider', '$locationProvider', '$sceDelegateProvider', (rout
       // resolve: {'formatService':'formatService'}
     });
 
+    // A Q L
+    route.when('/database/:currentDatabase/aql', {
+      controller:  'aqlController',
+      templateUrl: 'aql/aqlView.html'
+    });
+
     // route.when('/collection/:collectionName/:from/:to/:index', {
     //   controller: 'documentRouteController',
     //   template:''
     // });
+
+
 
 
     // H O M E

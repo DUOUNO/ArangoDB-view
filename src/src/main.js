@@ -54,6 +54,8 @@ requirejs(['jquery', 'angular',  'app', 'ngjsoneditor',
 
   'manage/collectionsController',
 
+  'aql/aqlController',
+
   'services/messageBrokerService',
   'services/queryService',
   'services/formatService',

@@ -37,6 +37,10 @@ define(['exports', 'angular', 'angular-route', 'angular-animate', 'jsoneditor', 
       controller: 'documentController',
       templateUrl: 'document/documentView.html'
     });
+    route.when('/database/:currentDatabase/aql', {
+      controller: 'aqlController',
+      templateUrl: 'aql/aqlView.html'
+    });
     route.when('/database/:currentDatabase', {
       controller: 'homeController',
       templateUrl: 'home/homeView.html'
