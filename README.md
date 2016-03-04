@@ -12,7 +12,7 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
 * easily create rules that filter and sort documents
 * pagination is saved when you edit a document and return to documents overview
 * next / prev document while in single document view
-* management collections / edges
+* __management collections / edges__
   * reload collection properties and indexes on demand
   * navigate to documents
   * load / unload
@@ -32,7 +32,7 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
     * journal size in MiB and MB
     * index buckets
   * delete collections
-* AQL queries
+* __run AQL queries__
  * execute queries while you type them, with a timeout or when you leave the AQL-editor
  * configure how many docs are teturned; from 1 to n, without restrictions
 
