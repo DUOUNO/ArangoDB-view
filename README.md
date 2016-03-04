@@ -29,7 +29,7 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
     * volatile y/n
     * system collection y/n
     * compaction y/n
-    * journal size
+    * journal size in MiB and MB
     * index buckets
   * delete collections
 
