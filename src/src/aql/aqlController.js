@@ -16,8 +16,8 @@ angularModule.push((scope, http, params, timeout) => {
   let options     = {eval:'blur', max:1000};
   let curTimeout  = undefined;
 
-  scope.queryResult = '';
-  scope.lastError   = '';
+  scope.queryResults = [];
+  scope.lastError    = '';
 
   http.get(`/_db/${params.currentDatabase}/_api/collection`).then(data => collections = data.data.collections.map((col) => col.name) );
 
@@ -80,7 +80,9 @@ angularModule.push((scope, http, params, timeout) => {
     ev.preventDefault();
   });
 
-  $('TEXTAREA#aqlEditor').on('blur', (ev) => sendAqlQuery($('TEXTAREA#aqlEditor').val()) );
+  $('TEXTAREA#aqlEditor').on('blur', (ev) => {
+    if (options.eval != 'blur') return;
+    sendAqlQuery($('TEXTAREA#aqlEditor').val()); });
 
 
   $('TEXTAREA#aqlEditor').on('keyup', (ev) => {
@@ -172,8 +174,6 @@ angularModule.push((scope, http, params, timeout) => {
                   $('TEXTAREA#aqlEditor').prop('selectionEnd', pos+ word.slice(beforeFirst.length).length );
 
 
-
-
                   break;
                 }
               } // for   
@@ -190,16 +190,42 @@ angularModule.push((scope, http, params, timeout) => {
   });
 
   let sendAqlQuery = (txt) => {
-    http.post(`/_db/${params.currentDatabase}/_api/cursor`, {
-      batchSize: options.count, query:txt
-    }).then( data => {
-      scope.lastError = '';
-      scope.queryResult = JSON.stringify(data.data.result, false, 2);
-    }, (data) => scope.lastError = data.data.errorMessage);
+    let lines   = txt.split('\n');
+    let queries = []
+    let idx     = undefined
+
+    for(let line of lines) {
+      if(0 == line.trim().toLowerCase().search(/^\/\/\ *query$/) )
+        if(idx == undefined) queries[idx = 0] = '';
+          else queries[++idx] = '';
+      if(idx == undefined) continue;
+      queries[idx] += line + '\n';
+    }
+
+    scope.queryResults.length = 0;
+
+    let _send = (idx) => {
+      if (!queries[idx]) return;
+
+      let start = performance.now();
+      http.post(`/_db/${params.currentDatabase}/_api/cursor`, {
+        batchSize: options.count, query:queries[idx]
+      }).then( data => {
+        scope.lastError = '';
+        let result = scope.queryResults[idx] = {};
+        Object.assign(result, data.data);
+        result.execTime   = performance.now() - start;
+        result.resultJson = JSON.stringify(data.data.result, false, 2);
+
+        _send(++idx);
+      }, (data) => scope.lastError   = data.data.errorMessage);
+    }
+    _send(0);
+
   }
 
   scope.evalOptions = (optionLine) => {
-    optionLine = optionLine.trim()
+    optionLine = optionLine.trim().toLowerCase()
     let result = undefined
     if (! (result = optionLine.match(/\/\/\ *eval\:(asap|blur|\d+ms)\ +max\:(all|\d+)/))) return
     let [count, evl, ...rest] = result.reverse();

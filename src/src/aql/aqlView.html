@@ -1,8 +1,12 @@
 <span>options: eval:(asap|blur|NUMms) max:(NUM|all)</span>
 <br />
 <textarea id="aqlEditor" style="font-family: monaco, monospace;" cols="100" rows="25">// eval:asap max:all
+// query
 </textarea>
 <br />
 <span data-ng-if="lastError">{{lastError}}</span>
 <br />
-<pre>{{queryResult}}</pre>
+<div data-ng-repeat="result in queryResults">
+  <span data-ng-if="result.execTime">{{result.execTime}} ms {{result.result.length}} results</span>
+  <pre>{{result.resultJson}}</pre>
+</div>

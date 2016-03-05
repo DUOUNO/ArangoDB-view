@@ -22,7 +22,7 @@ define(['app'], function (_app) {
       max: 1000
     };
     var curTimeout = undefined;
-    scope.queryResult = '';
+    scope.queryResults = [];
     scope.lastError = '';
     http.get('/_db/' + params.currentDatabase + '/_api/collection').then(function (data) {
       return collections = data.data.collections.map(function (col) {
@@ -68,7 +68,8 @@ define(['app'], function (_app) {
       ev.preventDefault();
     });
     $('TEXTAREA#aqlEditor').on('blur', function (ev) {
-      return sendAqlQuery($('TEXTAREA#aqlEditor').val());
+      if (options.eval != 'blur') return;
+      sendAqlQuery($('TEXTAREA#aqlEditor').val());
     });
     $('TEXTAREA#aqlEditor').on('keyup', function (ev) {
       var txt = $('TEXTAREA#aqlEditor').val();
@@ -191,19 +192,61 @@ define(['app'], function (_app) {
     });
 
     var sendAqlQuery = function sendAqlQuery(txt) {
-      http.post('/_db/' + params.currentDatabase + '/_api/cursor', {
-        batchSize: options.count,
-        query: txt
-      }).then(function (data) {
-        scope.lastError = '';
-        scope.queryResult = JSON.stringify(data.data.result, false, 2);
-      }, function (data) {
-        return scope.lastError = data.data.errorMessage;
-      });
+      var lines = txt.split('\n');
+      var queries = [];
+      var idx = undefined;
+      var _iteratorNormalCompletion3 = true;
+      var _didIteratorError3 = false;
+      var _iteratorError3 = undefined;
+
+      try {
+        for (var _iterator3 = lines[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var line = _step3.value;
+          if (0 == line.trim().toLowerCase().search(/^\/\/\ *query$/)) if (idx == undefined) queries[idx = 0] = '';else queries[++idx] = '';
+          if (idx == undefined) continue;
+          queries[idx] += line + '\n';
+        }
+      } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion3 && _iterator3.return) {
+            _iterator3.return();
+          }
+        } finally {
+          if (_didIteratorError3) {
+            throw _iteratorError3;
+          }
+        }
+      }
+
+      scope.queryResults.length = 0;
+
+      var _send = function _send(idx) {
+        if (!queries[idx]) return;
+        var start = performance.now();
+        http.post('/_db/' + params.currentDatabase + '/_api/cursor', {
+          batchSize: options.count,
+          query: queries[idx]
+        }).then(function (data) {
+          scope.lastError = '';
+          var result = scope.queryResults[idx] = {};
+          Object.assign(result, data.data);
+          result.execTime = performance.now() - start;
+          result.resultJson = JSON.stringify(data.data.result, false, 2);
+
+          _send(++idx);
+        }, function (data) {
+          return scope.lastError = data.data.errorMessage;
+        });
+      };
+
+      _send(0);
     };
 
     scope.evalOptions = function (optionLine) {
-      optionLine = optionLine.trim();
+      optionLine = optionLine.trim().toLowerCase();
       var result = undefined;
       if (!(result = optionLine.match(/\/\/\ *eval\:(asap|blur|\d+ms)\ +max\:(all|\d+)/))) return;
 
