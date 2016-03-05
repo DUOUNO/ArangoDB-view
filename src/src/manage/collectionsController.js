@@ -12,7 +12,6 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
   scope.format = formatService;
   scope.params = params;
   scope.Number = Number;
-  messageBroker.pub('current.collection', '');
   scope.showNewColForm = false;
   scope.newCol = {type:2, waitForSync:true, isVolatile:false,indexBuckets:8, isSystem:false, doCompact:true, journalSize:1024*1024*32};
 

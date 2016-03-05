@@ -14,7 +14,6 @@ define(['app'], function (_app) {
     scope.format = formatService;
     scope.params = params;
     scope.Number = Number;
-    messageBroker.pub('current.collection', '');
     scope.showNewColForm = false;
     scope.newCol = {
       type: 2,

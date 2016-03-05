@@ -67,7 +67,7 @@ define(['exports', 'angular', 'angular-route', 'angular-animate', 'jsoneditor', 
 
       if (route.current) {
         if (route.current.params.currentDatabase) messageBroker.pub('current.database', route.current.params.currentDatabase);
-        if (route.current.params.currentCollection) messageBroker.pub('current.collection', route.current.params.currentCollection);
+        if (route.current.params.currentCollection) messageBroker.pub('current.collection', route.current.params.currentCollection);else messageBroker.pub('current.collection', '');
       }
     });
     rootScope.$on('$routeChangeSuccess', function () {
