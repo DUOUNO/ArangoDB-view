@@ -1,4 +1,4 @@
-define(['exports', 'angular', 'angular-route', 'angular-animate', 'jsoneditor', 'ngjsoneditor'], function (exports, _angular2, _angularRoute, _angularAnimate, _jsoneditor, _ngjsoneditor) {
+define(['exports', 'angular', 'angular-route', 'angular-animate', 'angular-sanitize', 'jsoneditor', 'ngjsoneditor'], function (exports, _angular2, _angularRoute, _angularAnimate, _angularSanitize, _jsoneditor, _ngjsoneditor) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -11,6 +11,8 @@ define(['exports', 'angular', 'angular-route', 'angular-animate', 'jsoneditor', 
 
   var _angularAnimate2 = _interopRequireDefault(_angularAnimate);
 
+  var _angularSanitize2 = _interopRequireDefault(_angularSanitize);
+
   var _jsoneditor2 = _interopRequireDefault(_jsoneditor);
 
   var _ngjsoneditor2 = _interopRequireDefault(_ngjsoneditor);
@@ -22,7 +24,7 @@ define(['exports', 'angular', 'angular-route', 'angular-animate', 'jsoneditor', 
   }
 
   window.JSONEditor = _jsoneditor2.default;
-  var app = angular.module('app', ['ngRoute', 'ngAnimate', 'ng.jsoneditor']);
+  var app = angular.module('app', ['ngRoute', 'ngAnimate', 'ngSanitize', 'ng.jsoneditor']);
   app.config(['$routeProvider', '$locationProvider', '$sceDelegateProvider', function (route, locationProvider, sceDelegateProvider) {
     locationProvider.html5Mode(true);
     route.when('/database/:currentDatabase/manage/collections', {

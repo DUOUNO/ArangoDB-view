@@ -8,5 +8,7 @@
 <br />
 <div data-ng-repeat="result in queryResults">
   <span data-ng-if="result.execTime">{{result.execTime}} ms {{result.result.length}} results</span>
-  <pre>{{result.resultJson}}</pre>
+  <pre data-ng-if="!options.table">{{result.resultJson}}</pre>
+  <aql-result-table data-ng-if="options.table" data="result">
+  </aql-result-table>
 </div>

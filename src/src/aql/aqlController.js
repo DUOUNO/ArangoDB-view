@@ -12,9 +12,9 @@ angularModule.push((scope, http, params, timeout) => {
 
   console.log('init aqlController');
 
-  let collections = [];
-  let options     = {eval:'blur', max:1000};
-  let curTimeout  = undefined;
+  let collections   = [];
+  let curTimeout    = undefined;
+  scope.options     = {eval:'blur', max:1000};
 
   scope.queryResults = [];
   scope.lastError    = '';
@@ -81,7 +81,7 @@ angularModule.push((scope, http, params, timeout) => {
   });
 
   $('TEXTAREA#aqlEditor').on('blur', (ev) => {
-    if (options.eval != 'blur') return;
+    if (scope.options.eval != 'blur') return;
     sendAqlQuery($('TEXTAREA#aqlEditor').val()); });
 
 
@@ -96,12 +96,12 @@ angularModule.push((scope, http, params, timeout) => {
 
     scope.evalOptions(txtArr[0]);
 
-    if (options.eval === 'asap') {
+    if (scope.options.eval === 'asap') {
       sendAqlQuery(txt);
-    } else if( ! isNaN(options.eval)) {
+    } else if( ! isNaN(scope.options.eval)) {
       timeout.cancel(curTimeout);
 
-      curTimeout = timeout( () => {sendAqlQuery(txt); }, options.eval);
+      curTimeout = timeout( () => {sendAqlQuery(txt); }, scope.options.eval);
     } // if
 
     return
@@ -209,13 +209,23 @@ angularModule.push((scope, http, params, timeout) => {
 
       let start = performance.now();
       http.post(`/_db/${params.currentDatabase}/_api/cursor`, {
-        batchSize: options.count, query:queries[idx]
+        batchSize: scope.options.max, query:queries[idx]
       }).then( data => {
         scope.lastError = '';
         let result = scope.queryResults[idx] = {};
         Object.assign(result, data.data);
         result.execTime   = performance.now() - start;
         result.resultJson = JSON.stringify(data.data.result, false, 2);
+        if (scope.options.table) {
+          result.keys = [];
+          for(let doc of result.result) {
+            for(let key of Object.keys(doc)) {
+              if (~result.keys.indexOf(key)) continue;
+              result.keys.push(key);
+            };
+          } // for
+          console.log(result.keys);
+        }
 
         _send(++idx);
       }, (data) => scope.lastError   = data.data.errorMessage);
@@ -225,14 +235,19 @@ angularModule.push((scope, http, params, timeout) => {
   }
 
   scope.evalOptions = (optionLine) => {
-    optionLine = optionLine.trim().toLowerCase()
-    let result = undefined
-    if (! (result = optionLine.match(/\/\/\ *eval\:(asap|blur|\d+ms)\ +max\:(all|\d+)/))) return
-    let [count, evl, ...rest] = result.reverse();
-    if (0 === evl.search(/^\d+ms$/) ) evl = Number(evl.slice(0,-2));
-    if (! isNaN(count)) count = Number(count);
+    optionLine = optionLine.trim().toLowerCase();
+    if (!~optionLine.search(/^\/\//)) return; // cancel if its not a starting comment line
 
-    Object.assign(options, {count:count, eval:evl});
+    let options = [{name:'eval',  q:/eval\:(asap|blur|\d+ms)/, f:(m) => 0 === m.search(/^\d+ms$/) ? Number(m.slice(0, -2)) : m },
+                   {name:'max',   q:/max\:(all|\d+)/, f:(m)          => isNaN(m) ? m : Number(m) },
+                   {name:'table', q:/table:(true|false)/, f:(m)      => JSON.parse(m) }];
+
+    for(let key in options) {
+      let option = options[key];
+      let result = optionLine.match(option.q);
+      if (null == result) continue;
+      scope.options[option.name] = option.f ? option.f(result[1]) : result[1];
+    } // for
   }
 
   scope.$on('$destroy', () => $('TEXTAREA#aqlEditor').off('keyup', 'keydown', 'blur') );

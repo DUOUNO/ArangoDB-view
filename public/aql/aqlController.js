@@ -9,19 +9,15 @@ define(['app'], function (_app) {
     };
   }
 
-  function _toArray(arr) {
-    return Array.isArray(arr) ? arr : Array.from(arr);
-  }
-
   var angularModule = ['$scope', '$http', '$routeParams', '$timeout'];
   angularModule.push(function (scope, http, params, timeout) {
     console.log('init aqlController');
     var collections = [];
-    var options = {
+    var curTimeout = undefined;
+    scope.options = {
       eval: 'blur',
       max: 1000
     };
-    var curTimeout = undefined;
     scope.queryResults = [];
     scope.lastError = '';
     http.get('/_db/' + params.currentDatabase + '/_api/collection').then(function (data) {
@@ -68,7 +64,7 @@ define(['app'], function (_app) {
       ev.preventDefault();
     });
     $('TEXTAREA#aqlEditor').on('blur', function (ev) {
-      if (options.eval != 'blur') return;
+      if (scope.options.eval != 'blur') return;
       sendAqlQuery($('TEXTAREA#aqlEditor').val());
     });
     $('TEXTAREA#aqlEditor').on('keyup', function (ev) {
@@ -78,13 +74,13 @@ define(['app'], function (_app) {
       var ePos = $('TEXTAREA#aqlEditor').prop('selectionEnd');
       scope.evalOptions(txtArr[0]);
 
-      if (options.eval === 'asap') {
+      if (scope.options.eval === 'asap') {
         sendAqlQuery(txt);
-      } else if (!isNaN(options.eval)) {
+      } else if (!isNaN(scope.options.eval)) {
         timeout.cancel(curTimeout);
         curTimeout = timeout(function () {
           sendAqlQuery(txt);
-        }, options.eval);
+        }, scope.options.eval);
       }
 
       return;
@@ -227,7 +223,7 @@ define(['app'], function (_app) {
         if (!queries[idx]) return;
         var start = performance.now();
         http.post('/_db/' + params.currentDatabase + '/_api/cursor', {
-          batchSize: options.count,
+          batchSize: scope.options.max,
           query: queries[idx]
         }).then(function (data) {
           scope.lastError = '';
@@ -235,6 +231,60 @@ define(['app'], function (_app) {
           Object.assign(result, data.data);
           result.execTime = performance.now() - start;
           result.resultJson = JSON.stringify(data.data.result, false, 2);
+
+          if (scope.options.table) {
+            result.keys = [];
+            var _iteratorNormalCompletion4 = true;
+            var _didIteratorError4 = false;
+            var _iteratorError4 = undefined;
+
+            try {
+              for (var _iterator4 = result.result[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                var doc = _step4.value;
+                var _iteratorNormalCompletion5 = true;
+                var _didIteratorError5 = false;
+                var _iteratorError5 = undefined;
+
+                try {
+                  for (var _iterator5 = Object.keys(doc)[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                    var key = _step5.value;
+                    if (~result.keys.indexOf(key)) continue;
+                    result.keys.push(key);
+                  }
+                } catch (err) {
+                  _didIteratorError5 = true;
+                  _iteratorError5 = err;
+                } finally {
+                  try {
+                    if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                      _iterator5.return();
+                    }
+                  } finally {
+                    if (_didIteratorError5) {
+                      throw _iteratorError5;
+                    }
+                  }
+                }
+
+                ;
+              }
+            } catch (err) {
+              _didIteratorError4 = true;
+              _iteratorError4 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                  _iterator4.return();
+                }
+              } finally {
+                if (_didIteratorError4) {
+                  throw _iteratorError4;
+                }
+              }
+            }
+
+            console.log(result.keys);
+          }
 
           _send(++idx);
         }, function (data) {
@@ -247,24 +297,33 @@ define(['app'], function (_app) {
 
     scope.evalOptions = function (optionLine) {
       optionLine = optionLine.trim().toLowerCase();
-      var result = undefined;
-      if (!(result = optionLine.match(/\/\/\ *eval\:(asap|blur|\d+ms)\ +max\:(all|\d+)/))) return;
+      if (! ~optionLine.search(/^\/\//)) return;
+      var options = [{
+        name: 'eval',
+        q: /eval\:(asap|blur|\d+ms)/,
+        f: function f(m) {
+          return 0 === m.search(/^\d+ms$/) ? Number(m.slice(0, -2)) : m;
+        }
+      }, {
+        name: 'max',
+        q: /max\:(all|\d+)/,
+        f: function f(m) {
+          return isNaN(m) ? m : Number(m);
+        }
+      }, {
+        name: 'table',
+        q: /table:(true|false)/,
+        f: function f(m) {
+          return JSON.parse(m);
+        }
+      }];
 
-      var _result$reverse = result.reverse();
-
-      var _result$reverse2 = _toArray(_result$reverse);
-
-      var count = _result$reverse2[0];
-      var evl = _result$reverse2[1];
-
-      var rest = _result$reverse2.slice(2);
-
-      if (0 === evl.search(/^\d+ms$/)) evl = Number(evl.slice(0, -2));
-      if (!isNaN(count)) count = Number(count);
-      Object.assign(options, {
-        count: count,
-        eval: evl
-      });
+      for (var key in options) {
+        var option = options[key];
+        var result = optionLine.match(option.q);
+        if (null == result) continue;
+        scope.options[option.name] = option.f ? option.f(result[1]) : result[1];
+      }
     };
 
     scope.$on('$destroy', function () {

@@ -6,12 +6,13 @@
 import _angular from 'angular'
 import angularRoute    from 'angular-route'
 import angularAnimate  from 'angular-animate'
+import anguarSanitize  from 'angular-sanitize'
 import jsoneditor      from 'jsoneditor'
 import ngjsoneditor    from 'ngjsoneditor'
 
 window.JSONEditor = jsoneditor;
 
-let app = angular.module('app', ['ngRoute', 'ngAnimate', 'ng.jsoneditor']);
+let app = angular.module('app', ['ngRoute', 'ngAnimate', 'ngSanitize', 'ng.jsoneditor']);
 
 app.config(['$routeProvider', '$locationProvider', '$sceDelegateProvider', (route, locationProvider, sceDelegateProvider) => {
 

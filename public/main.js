@@ -13,6 +13,9 @@ define([], function () {
       'angular-animate': {
         deps: ['angular']
       },
+      'angular-sanitize': {
+        deps: ['angular']
+      },
       'bootstrap': {
         deps: ['jquery']
       },
@@ -29,6 +32,7 @@ define([], function () {
     'angular': 'lib/angular-' + angularVersion,
     'angular-route': 'lib/angular-route-' + angularVersion,
     'angular-animate': 'lib/angular-animate-' + angularVersion,
+    'angular-sanitize': 'lib/angular-sanitize-' + angularVersion,
     'jsoneditor': 'lib/jsoneditor-5-1-3',
     'ngjsoneditor': 'lib/ngjsoneditor-1-0-0'
   };
@@ -38,7 +42,7 @@ define([], function () {
   }
 
   requirejs.config(requireJsConfig);
-  requirejs(['jquery', 'angular', 'app', 'ngjsoneditor', 'home/homeController', 'navBar/navBarController', 'collectionsBar/collectionsBarController', 'collection/collectionController', 'document/documentController', 'document/documentRouteController', 'manage/collectionsController', 'aql/aqlController', 'services/messageBrokerService', 'services/queryService', 'services/formatService', 'services/fastFilterService', 'services/testService', 'directives/feedbackDirective', 'directives/journalSizeDirective'], function ($) {
+  requirejs(['jquery', 'angular', 'app', 'ngjsoneditor', 'home/homeController', 'navBar/navBarController', 'collectionsBar/collectionsBarController', 'collection/collectionController', 'document/documentController', 'document/documentRouteController', 'manage/collectionsController', 'aql/aqlController', 'services/messageBrokerService', 'services/queryService', 'services/formatService', 'services/fastFilterService', 'services/testService', 'directives/feedbackDirective', 'directives/journalSizeDirective', 'directives/aqlResultTable'], function ($) {
     $.ajaxSetup({
       cache: false
     });
