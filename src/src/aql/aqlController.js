@@ -10,6 +10,9 @@ let angularModule = ['$scope', '$http', '$routeParams', '$timeout'];
 
 angularModule.push((scope, http, params, timeout) => {
 
+  http.put(`/_db/${params.currentDatabase}/_api/query/properties`, {slowQueryThreshold:0, enabled:true, trackSlowQueries:true});
+
+
   console.log('init aqlController');
 
   let collections   = [];
@@ -204,30 +207,42 @@ angularModule.push((scope, http, params, timeout) => {
 
     scope.queryResults.length = 0;
 
+    let _buildResult = (qData, httpTime, qSlow) => {
+      scope.lastError = '';
+      let result        = scope.queryResults[idx] = {};
+      result.httpTime   = httpTime;
+      result.execTime   = qSlow ? qSlow.runTime * 1000 : 'No timing available';
+      Object.assign(result, qData.data);
+      result.resultJson = JSON.stringify(qData.data.result, false, 2);
+      if (scope.options.table) {
+        result.keys = [];
+        for(let doc of result.result) {
+          for(let key of Object.keys(doc)) {
+            if (~result.keys.indexOf(key)) continue;
+            result.keys.push(key);
+          };
+        } // for
+      } // if
+      _send(++idx);
+    }
+
     let _send = (idx) => {
       if (!queries[idx]) return;
 
       let start = performance.now();
-      http.post(`/_db/${params.currentDatabase}/_api/cursor`, {
-        batchSize: scope.options.max, query:queries[idx]
-      }).then( data => {
-        scope.lastError = '';
-        let result = scope.queryResults[idx] = {};
-        Object.assign(result, data.data);
-        result.execTime   = performance.now() - start;
-        result.resultJson = JSON.stringify(data.data.result, false, 2);
-        if (scope.options.table) {
-          result.keys = [];
-          for(let doc of result.result) {
-            for(let key of Object.keys(doc)) {
-              if (~result.keys.indexOf(key)) continue;
-              result.keys.push(key);
-            };
-          } // for
-          console.log(result.keys);
-        }
+      http.post(`/_db/${params.currentDatabase}/_api/cursor?qid=${start}`, {
+        batchSize: scope.options.max, query:`// qid:${start}\n` + queries[idx]
+      }).then( qData => {
+        let end = performance.now();
 
-        _send(++idx);
+        http.get(`/_db/${params.currentDatabase}/_api/query/slow`).then(data => {
+          for (var i = data.data.length - 1; i >= 0; i--) {
+            let slowq = data.data[i];
+            if (0 != slowq.query.indexOf(`// qid:${start}\n`) ) continue;
+            _buildResult(qData, end-start, slowq);
+            break;
+          } // for
+        }, () => _buildResult(qData, end-start));
       }, (data) => scope.lastError   = data.data.errorMessage);
     }
     _send(0);

@@ -11,6 +11,11 @@ define(['app'], function (_app) {
 
   var angularModule = ['$scope', '$http', '$routeParams', '$timeout'];
   angularModule.push(function (scope, http, params, timeout) {
+    http.put('/_db/' + params.currentDatabase + '/_api/query/properties', {
+      slowQueryThreshold: 0,
+      enabled: true,
+      trackSlowQueries: true
+    });
     console.log('init aqlController');
     var collections = [];
     var curTimeout = undefined;
@@ -219,74 +224,89 @@ define(['app'], function (_app) {
 
       scope.queryResults.length = 0;
 
+      var _buildResult = function _buildResult(qData, httpTime, qSlow) {
+        scope.lastError = '';
+        var result = scope.queryResults[idx] = {};
+        result.httpTime = httpTime;
+        result.execTime = qSlow ? qSlow.runTime * 1000 : 'No timing available';
+        Object.assign(result, qData.data);
+        result.resultJson = JSON.stringify(qData.data.result, false, 2);
+
+        if (scope.options.table) {
+          result.keys = [];
+          var _iteratorNormalCompletion4 = true;
+          var _didIteratorError4 = false;
+          var _iteratorError4 = undefined;
+
+          try {
+            for (var _iterator4 = result.result[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+              var doc = _step4.value;
+              var _iteratorNormalCompletion5 = true;
+              var _didIteratorError5 = false;
+              var _iteratorError5 = undefined;
+
+              try {
+                for (var _iterator5 = Object.keys(doc)[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                  var key = _step5.value;
+                  if (~result.keys.indexOf(key)) continue;
+                  result.keys.push(key);
+                }
+              } catch (err) {
+                _didIteratorError5 = true;
+                _iteratorError5 = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                    _iterator5.return();
+                  }
+                } finally {
+                  if (_didIteratorError5) {
+                    throw _iteratorError5;
+                  }
+                }
+              }
+
+              ;
+            }
+          } catch (err) {
+            _didIteratorError4 = true;
+            _iteratorError4 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                _iterator4.return();
+              }
+            } finally {
+              if (_didIteratorError4) {
+                throw _iteratorError4;
+              }
+            }
+          }
+        }
+
+        _send(++idx);
+      };
+
       var _send = function _send(idx) {
         if (!queries[idx]) return;
         var start = performance.now();
-        http.post('/_db/' + params.currentDatabase + '/_api/cursor', {
+        http.post('/_db/' + params.currentDatabase + '/_api/cursor?qid=' + start, {
           batchSize: scope.options.max,
-          query: queries[idx]
-        }).then(function (data) {
-          scope.lastError = '';
-          var result = scope.queryResults[idx] = {};
-          Object.assign(result, data.data);
-          result.execTime = performance.now() - start;
-          result.resultJson = JSON.stringify(data.data.result, false, 2);
+          query: '// qid:' + start + '\n' + queries[idx]
+        }).then(function (qData) {
+          var end = performance.now();
+          http.get('/_db/' + params.currentDatabase + '/_api/query/slow').then(function (data) {
+            for (var i = data.data.length - 1; i >= 0; i--) {
+              var slowq = data.data[i];
+              if (0 != slowq.query.indexOf('// qid:' + start + '\n')) continue;
 
-          if (scope.options.table) {
-            result.keys = [];
-            var _iteratorNormalCompletion4 = true;
-            var _didIteratorError4 = false;
-            var _iteratorError4 = undefined;
+              _buildResult(qData, end - start, slowq);
 
-            try {
-              for (var _iterator4 = result.result[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                var doc = _step4.value;
-                var _iteratorNormalCompletion5 = true;
-                var _didIteratorError5 = false;
-                var _iteratorError5 = undefined;
-
-                try {
-                  for (var _iterator5 = Object.keys(doc)[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-                    var key = _step5.value;
-                    if (~result.keys.indexOf(key)) continue;
-                    result.keys.push(key);
-                  }
-                } catch (err) {
-                  _didIteratorError5 = true;
-                  _iteratorError5 = err;
-                } finally {
-                  try {
-                    if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                      _iterator5.return();
-                    }
-                  } finally {
-                    if (_didIteratorError5) {
-                      throw _iteratorError5;
-                    }
-                  }
-                }
-
-                ;
-              }
-            } catch (err) {
-              _didIteratorError4 = true;
-              _iteratorError4 = err;
-            } finally {
-              try {
-                if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                  _iterator4.return();
-                }
-              } finally {
-                if (_didIteratorError4) {
-                  throw _iteratorError4;
-                }
-              }
+              break;
             }
-
-            console.log(result.keys);
-          }
-
-          _send(++idx);
+          }, function () {
+            return _buildResult(qData, end - start);
+          });
         }, function (data) {
           return scope.lastError = data.data.errorMessage;
         });

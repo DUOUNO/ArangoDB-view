@@ -15,33 +15,35 @@ angularDirective.push((interpolate, sce) => {
       data: "="
     },
     link: (scope, element) => {
-      let table = document.createElement('table');
-      table.className = 'table table-sm';
 
-      let thead = document.createElement('thead');
-      let tr    = document.createElement('tr');
-      for(let key of scope.data.keys) {
-        let th = document.createElement('th');
-        th.textContent = key;
-        tr.appendChild(th);        
-      }
-      thead.appendChild(tr);
-      table.appendChild(thead);
+      window.requestAnimationFrame( () => {
+        let table = document.createElement('table');
+        table.className = 'table table-sm';
 
-      let tbody = document.createElement('tbody');
-      console.log(scope.data.result);
-
-      for(let doc of scope.data.result) {
-        let tr = document.createElement('tr');
+        let thead = document.createElement('thead');
+        let tr    = document.createElement('tr');
         for(let key of scope.data.keys) {
-          let td = document.createElement('td');
-          td.textContent = interpolate('{{doc[key]}}')({doc:doc, key:key});
-          tr.appendChild(td);
+          let th = document.createElement('th');
+          th.textContent = key;
+          tr.appendChild(th);
         }
-        tbody.appendChild(tr);
-      }
-      table.appendChild(tbody);
-      element.get(0).appendChild(table);
+        thead.appendChild(tr);
+        table.appendChild(thead);
+
+        let tbody = document.createElement('tbody');
+
+        for(let doc of scope.data.result) {
+          let tr = document.createElement('tr');
+          for(let key of scope.data.keys) {
+            let td = document.createElement('td');
+            td.textContent = interpolate('{{doc[key]}}')({doc:doc, key:key});
+            tr.appendChild(td);
+          }
+          tbody.appendChild(tr);
+        }
+        table.appendChild(tbody);
+        element.get(0).appendChild(table);
+      });
     }
   }
 });
