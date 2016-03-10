@@ -44,6 +44,7 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
 * save AQL queries
 * query log
 * authentication
+* manage indexes
 
 ![interfacescreenshot](images/explained0.png)
 
