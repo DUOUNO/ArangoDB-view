@@ -60,6 +60,7 @@ app.config(['$routeProvider', '$locationProvider', '$sceDelegateProvider', (rout
 app.run(['$rootScope', '$location', 'messageBrokerService', '$routeParams', '$route', (rootScope, location, messageBroker, routeParams, route) => {
   messageBroker.pub('current.database', '_system');
   messageBroker.pub('current.fastFilter', 'none');
+  messageBroker.pub('current.query', 'unsaved');
   messageBroker.pub('show.fastFilter', false);
   rootScope.$on('$routeChangeError', (a, b, c, d) => {
     console.log('routeChangeError');
