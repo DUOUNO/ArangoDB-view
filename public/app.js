@@ -54,6 +54,7 @@ define(['exports', 'angular', 'angular-route', 'angular-animate', 'angular-sanit
   app.run(['$rootScope', '$location', 'messageBrokerService', '$routeParams', '$route', function (rootScope, location, messageBroker, routeParams, route) {
     messageBroker.pub('current.database', '_system');
     messageBroker.pub('current.fastFilter', 'none');
+    messageBroker.pub('current.query', 'unsaved');
     messageBroker.pub('show.fastFilter', false);
     rootScope.$on('$routeChangeError', function (a, b, c, d) {
       console.log('routeChangeError');

@@ -9,8 +9,8 @@ define(['app'], function (_app) {
     };
   }
 
-  var angularModule = ['$scope', '$http', '$routeParams', '$timeout'];
-  angularModule.push(function (scope, http, params, timeout) {
+  var angularModule = ['$scope', '$http', '$routeParams', '$timeout', 'messageBrokerService', '$interpolate'];
+  angularModule.push(function (scope, http, params, timeout, messageBroker, interpolate) {
     http.put('/_db/' + params.currentDatabase + '/_api/query/properties', {
       slowQueryThreshold: 0,
       enabled: true,
@@ -19,12 +19,20 @@ define(['app'], function (_app) {
     console.log('init aqlController');
     var collections = [];
     var curTimeout = undefined;
-    scope.options = {
-      eval: 'blur',
-      max: 1000
-    };
     scope.queryResults = [];
     scope.lastError = '';
+    scope.selectedQuery = messageBroker.last('current.query');
+    scope.savedQueries = {
+      unsaved: {
+        name: 'unsaved',
+        options: {
+          eval: 'blur',
+          max: 1000
+        },
+        query: '// eval:asap max:all table:true name:unsaved\n// query\n'
+      }
+    };
+    scope.options = scope.savedQueries[scope.selectedQuery].options;
     http.get('/_db/' + params.currentDatabase + '/_api/collection').then(function (data) {
       return collections = data.data.collections.map(function (col) {
         return col.name;
@@ -73,123 +81,125 @@ define(['app'], function (_app) {
       sendAqlQuery($('TEXTAREA#aqlEditor').val());
     });
     $('TEXTAREA#aqlEditor').on('keyup', function (ev) {
-      var txt = $('TEXTAREA#aqlEditor').val();
-      var txtArr = txt.split('\n');
-      var pos = $('TEXTAREA#aqlEditor').prop('selectionStart');
-      var ePos = $('TEXTAREA#aqlEditor').prop('selectionEnd');
-      scope.evalOptions(txtArr[0]);
+      return scope.$apply(function () {
+        var txt = $('TEXTAREA#aqlEditor').val();
+        var txtArr = txt.split('\n');
+        var pos = $('TEXTAREA#aqlEditor').prop('selectionStart');
+        var ePos = $('TEXTAREA#aqlEditor').prop('selectionEnd');
+        scope.evalOptions(txtArr[0]);
 
-      if (scope.options.eval === 'asap') {
-        sendAqlQuery(txt);
-      } else if (!isNaN(scope.options.eval)) {
-        timeout.cancel(curTimeout);
-        curTimeout = timeout(function () {
+        if (scope.options.eval === 'asap') {
           sendAqlQuery(txt);
-        }, scope.options.eval);
-      }
-
-      return;
-      if (~[8, 37, 38, 39, 40].indexOf(ev.keyCode)) return;
-      console.log('-------------------------------', ev);
-      console.log('after end is:', [txt[ePos]]);
-      if (txt[ePos] && ! ~txt[ePos].search(/\s/)) return;
-      var before = txt.slice(0, pos),
-          after = txt.slice(pos);
-      var beforeArray = before.split(' ');
-      var afterArray = after.split(' ');
-      console.log('beforeArray afterArray');
-      console.log(beforeArray);
-      console.log(afterArray);
-      var beforeFirst = beforeArray.slice(-1).pop();
-      var afterFirst = afterArray.slice(0, 1).pop();
-      var i = pos - 1,
-          partText = txt.slice(pos, ePos);
-      ;
-
-      while (txt[i]) {
-        if (0 == txt[i].search(/\s/)) break;
-        partText = txt[i] + partText;
-        i--;
-      }
-
-      i = ePos;
-
-      while (txt[i]) {
-        if (0 == txt[i].search(/\s/)) break;
-        partText = partText + txt[i];
-        i++;
-      }
-
-      var cursorWord = partText;
-      console.log('cursorWord is', [cursorWord]);
-      console.log('beforeFirst afterFirst', [beforeFirst, afterFirst]);
-
-      if (beforeFirst.length) {
-        var noMatch = true;
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
-
-        try {
-          for (var _iterator = words[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var word = _step.value;
-            if (word.toLowerCase() != cursorWord.toLowerCase()) continue;
-            noMatch = false;
-            break;
-          }
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-              _iterator.return();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
+        } else if (!isNaN(scope.options.eval)) {
+          timeout.cancel(curTimeout);
+          curTimeout = timeout(function () {
+            sendAqlQuery(txt);
+          }, scope.options.eval);
         }
 
-        if (noMatch) {
-          var _iteratorNormalCompletion2 = true;
-          var _didIteratorError2 = false;
-          var _iteratorError2 = undefined;
+        return;
+        if (~[8, 37, 38, 39, 40].indexOf(ev.keyCode)) return;
+        console.log('-------------------------------', ev);
+        console.log('after end is:', [txt[ePos]]);
+        if (txt[ePos] && ! ~txt[ePos].search(/\s/)) return;
+        var before = txt.slice(0, pos),
+            after = txt.slice(pos);
+        var beforeArray = before.split(' ');
+        var afterArray = after.split(' ');
+        console.log('beforeArray afterArray');
+        console.log(beforeArray);
+        console.log(afterArray);
+        var beforeFirst = beforeArray.slice(-1).pop();
+        var afterFirst = afterArray.slice(0, 1).pop();
+        var i = pos - 1,
+            partText = txt.slice(pos, ePos);
+        ;
+
+        while (txt[i]) {
+          if (0 == txt[i].search(/\s/)) break;
+          partText = txt[i] + partText;
+          i--;
+        }
+
+        i = ePos;
+
+        while (txt[i]) {
+          if (0 == txt[i].search(/\s/)) break;
+          partText = partText + txt[i];
+          i++;
+        }
+
+        var cursorWord = partText;
+        console.log('cursorWord is', [cursorWord]);
+        console.log('beforeFirst afterFirst', [beforeFirst, afterFirst]);
+
+        if (beforeFirst.length) {
+          var noMatch = true;
+          var _iteratorNormalCompletion = true;
+          var _didIteratorError = false;
+          var _iteratorError = undefined;
 
           try {
-            for (var _iterator2 = words[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-              var word = _step2.value;
-
-              if (0 == word.toLowerCase().indexOf(beforeFirst.toLowerCase())) {
-                console.log('word match', word);
-                console.log('would insert', word.slice(beforeFirst.length));
-                var newStr = before + word.slice(beforeFirst.length) + after;
-                console.log('newstr', newStr);
-                $('TEXTAREA#aqlEditor').val(newStr);
-                $('TEXTAREA#aqlEditor').prop('selectionStart', pos);
-                $('TEXTAREA#aqlEditor').prop('selectionEnd', pos + word.slice(beforeFirst.length).length);
-                break;
-              }
+            for (var _iterator = words[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              var word = _step.value;
+              if (word.toLowerCase() != cursorWord.toLowerCase()) continue;
+              noMatch = false;
+              break;
             }
           } catch (err) {
-            _didIteratorError2 = true;
-            _iteratorError2 = err;
+            _didIteratorError = true;
+            _iteratorError = err;
           } finally {
             try {
-              if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                _iterator2.return();
+              if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
               }
             } finally {
-              if (_didIteratorError2) {
-                throw _iteratorError2;
+              if (_didIteratorError) {
+                throw _iteratorError;
+              }
+            }
+          }
+
+          if (noMatch) {
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+              for (var _iterator2 = words[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                var word = _step2.value;
+
+                if (0 == word.toLowerCase().indexOf(beforeFirst.toLowerCase())) {
+                  console.log('word match', word);
+                  console.log('would insert', word.slice(beforeFirst.length));
+                  var newStr = before + word.slice(beforeFirst.length) + after;
+                  console.log('newstr', newStr);
+                  $('TEXTAREA#aqlEditor').val(newStr);
+                  $('TEXTAREA#aqlEditor').prop('selectionStart', pos);
+                  $('TEXTAREA#aqlEditor').prop('selectionEnd', pos + word.slice(beforeFirst.length).length);
+                  break;
+                }
+              }
+            } catch (err) {
+              _didIteratorError2 = true;
+              _iteratorError2 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                  _iterator2.return();
+                }
+              } finally {
+                if (_didIteratorError2) {
+                  throw _iteratorError2;
+                }
               }
             }
           }
         }
-      }
 
-      console.log(beforeFirst, before, after);
+        console.log(beforeFirst, before, after);
+      });
     });
 
     var sendAqlQuery = function sendAqlQuery(txt) {
@@ -316,6 +326,20 @@ define(['app'], function (_app) {
     };
 
     scope.evalOptions = function (optionLine) {
+      var sPos = $('TEXTAREA#aqlEditor').prop('selectionStart');
+      var len = optionLine.length;
+
+      if (len < sPos) {
+        var result = optionLine.match(/name:(\S+)/);
+        var name = result[1] || 'unsaved';
+        scope.options['name'] = name;
+        scope.selectedQuery = name;
+        scope.savedQueries[name] = {
+          name: name,
+          query: $('TEXTAREA#aqlEditor').val()
+        };
+      }
+
       optionLine = optionLine.trim().toLowerCase();
       if (! ~optionLine.search(/^\/\//)) return;
       var options = [{
@@ -337,13 +361,89 @@ define(['app'], function (_app) {
           return JSON.parse(m);
         }
       }];
+      var opts = {};
 
       for (var key in options) {
         var option = options[key];
         var result = optionLine.match(option.q);
         if (null == result) continue;
-        scope.options[option.name] = option.f ? option.f(result[1]) : result[1];
+        opts[option.name] = option.f ? option.f(result[1]) : result[1];
       }
+
+      scope.options = scope.savedQueries[scope.selectedQuery].options = opts;
+    };
+
+    scope.changedQuery = function () {
+      var queryName = scope.selectedQuery;
+      console.log('seelct query', queryName);
+      $('TEXTAREA#aqlEditor').val(scope.savedQueries[queryName].query);
+      scope.options = scope.savedQueries[queryName].options;
+      scope.evalOptions(scope.savedQueries[queryName].query.split('\n')[0]);
+    };
+
+    scope.copyToClipboard = function (result) {
+      console.log(result);
+      var keys = result.keys;
+      var lines = [keys.join('\t')];
+      var _iteratorNormalCompletion6 = true;
+      var _didIteratorError6 = false;
+      var _iteratorError6 = undefined;
+
+      try {
+        for (var _iterator6 = result.result[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+          var doc = _step6.value;
+          var line = [];
+          var _iteratorNormalCompletion7 = true;
+          var _didIteratorError7 = false;
+          var _iteratorError7 = undefined;
+
+          try {
+            for (var _iterator7 = keys[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+              var key = _step7.value;
+              line.push(interpolate('{{doc[key]}}')({
+                doc: doc,
+                key: key
+              }));
+            }
+          } catch (err) {
+            _didIteratorError7 = true;
+            _iteratorError7 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                _iterator7.return();
+              }
+            } finally {
+              if (_didIteratorError7) {
+                throw _iteratorError7;
+              }
+            }
+          }
+
+          lines.push(line.join('\t'));
+        }
+      } catch (err) {
+        _didIteratorError6 = true;
+        _iteratorError6 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion6 && _iterator6.return) {
+            _iterator6.return();
+          }
+        } finally {
+          if (_didIteratorError6) {
+            throw _iteratorError6;
+          }
+        }
+      }
+
+      document.oncopy = function (e) {
+        e.clipboardData.setData('text/plain', lines.join('\n'));
+        e.preventDefault();
+        document.oncopy = null;
+      };
+
+      console.log(document.execCommand('copy'));
     };
 
     scope.$on('$destroy', function () {

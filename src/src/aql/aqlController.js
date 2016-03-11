@@ -6,9 +6,9 @@
 import app from 'app'
 
 
-let angularModule = ['$scope', '$http', '$routeParams', '$timeout'];
+let angularModule = ['$scope', '$http', '$routeParams', '$timeout', 'messageBrokerService', '$interpolate'];
 
-angularModule.push((scope, http, params, timeout) => {
+angularModule.push((scope, http, params, timeout, messageBroker, interpolate) => {
 
   http.put(`/_db/${params.currentDatabase}/_api/query/properties`, {slowQueryThreshold:0, enabled:true, trackSlowQueries:true});
 
@@ -17,12 +17,16 @@ angularModule.push((scope, http, params, timeout) => {
 
   let collections   = [];
   let curTimeout    = undefined;
-  scope.options     = {eval:'blur', max:1000};
-
   scope.queryResults = [];
   scope.lastError    = '';
 
+  scope.selectedQuery = messageBroker.last('current.query');
+  scope.savedQueries  = {unsaved: {name:'unsaved', options:{eval:'blur', max:1000}, query:'// eval:asap max:all table:true name:unsaved\n// query\n'}};
+  scope.options       = scope.savedQueries[scope.selectedQuery].options;
+
   http.get(`/_db/${params.currentDatabase}/_api/collection`).then(data => collections = data.data.collections.map((col) => col.name) );
+
+
 
 
   let words = ['LET', 'IN', 'RETURN', 'TO_NUMBER', 'TO_STRING', 'IS_NULL', 'NOT_NULL', 'FILTER', 'FOR'];
@@ -88,7 +92,7 @@ angularModule.push((scope, http, params, timeout) => {
     sendAqlQuery($('TEXTAREA#aqlEditor').val()); });
 
 
-  $('TEXTAREA#aqlEditor').on('keyup', (ev) => {
+  $('TEXTAREA#aqlEditor').on('keyup', (ev) => scope.$apply( () => {
     let txt       = $('TEXTAREA#aqlEditor').val();
     let txtArr    = txt.split('\n');
     let pos       = $('TEXTAREA#aqlEditor').prop('selectionStart');
@@ -186,11 +190,8 @@ angularModule.push((scope, http, params, timeout) => {
 
 
     console.log(beforeFirst, before, after);
+  }));
 
-
-
-
-  });
 
   let sendAqlQuery = (txt) => {
     let lines   = txt.split('\n');
@@ -250,23 +251,65 @@ angularModule.push((scope, http, params, timeout) => {
   }
 
   scope.evalOptions = (optionLine) => {
+    let sPos = $('TEXTAREA#aqlEditor').prop('selectionStart');
+    let len  = optionLine.length;
+
+    // check for name
+    if(len < sPos) {
+      let result = optionLine.match(/name:(\S+)/);
+      let name   = result[1] || 'unsaved'
+      scope.options['name']    = name;
+      scope.selectedQuery      = name;
+      scope.savedQueries[name] = {name:name, query:$('TEXTAREA#aqlEditor').val()};
+    } // if
+
     optionLine = optionLine.trim().toLowerCase();
     if (!~optionLine.search(/^\/\//)) return; // cancel if its not a starting comment line
 
     let options = [{name:'eval',  q:/eval\:(asap|blur|\d+ms)/, f:(m) => 0 === m.search(/^\d+ms$/) ? Number(m.slice(0, -2)) : m },
                    {name:'max',   q:/max\:(all|\d+)/, f:(m)          => isNaN(m) ? m : Number(m) },
                    {name:'table', q:/table:(true|false)/, f:(m)      => JSON.parse(m) }];
-
+    let opts = {};
     for(let key in options) {
       let option = options[key];
       let result = optionLine.match(option.q);
       if (null == result) continue;
-      scope.options[option.name] = option.f ? option.f(result[1]) : result[1];
+      opts[option.name] = option.f ? option.f(result[1]) : result[1];
     } // for
+    scope.options = scope.savedQueries[scope.selectedQuery].options = opts;
+  } // evalOptions()
+
+  scope.changedQuery = () => {
+    let queryName = scope.selectedQuery;
+    console.log('seelct query', queryName);
+    $('TEXTAREA#aqlEditor').val(scope.savedQueries[queryName].query);
+    scope.options = scope.savedQueries[queryName].options;
+    scope.evalOptions(scope.savedQueries[queryName].query.split('\n')[0]);
+  }
+
+  scope.copyToClipboard = (result) => {
+    console.log(result);
+    let keys = result.keys;
+    let lines = [keys.join('\t')];
+
+    for(let doc of result.result) {
+      let line = [];
+      for(let key of keys) {
+        line.push(interpolate('{{doc[key]}}')({doc:doc, key:key}));
+      } // for
+      lines.push(line.join('\t'));
+    } // for
+
+    document.oncopy = (e) => {
+      e.clipboardData.setData('text/plain', lines.join('\n'));
+      e.preventDefault();
+      document.oncopy = null;
+    } // oncopy()
+
+    console.log(document.execCommand('copy'));
   }
 
   scope.$on('$destroy', () => $('TEXTAREA#aqlEditor').off('keyup', 'keydown', 'blur') );
-
 });
 
 app.controller('aqlController', angularModule);

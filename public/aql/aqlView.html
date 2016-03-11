@@ -1,13 +1,14 @@
-<span>options: eval:(asap|blur|NUMms) max:(NUM|all)</span>
-<br />
-<textarea id="aqlEditor" style="font-family: monaco, monospace;" cols="100" rows="25">// eval:asap max:all
+<span>options: eval:(asap|blur|NUMms) max:(NUM|all) table:(true|false)</span>
+<select title="click to select a query" class="form-control" data-ng-model="selectedQuery" data-ng-options="key as value.name for (key, value) in savedQueries" data-ng-change="changedQuery()"></select>
+<textarea id="aqlEditor" style="font-family: monaco, monospace;" cols="100" rows="25">// eval:asap max:all table:true name:unsaved
 // query
 </textarea>
 <br />
 <span data-ng-if="lastError">{{lastError}}</span>
+{{options.table}} <br />
 <br />
 <div data-ng-repeat="result in queryResults">
-  <span data-ng-if="result.execTime">query exec time: {{result.execTime}} ms, HTTP {{result.httpTime}} ms, {{result.result.length}} results</span>
+  <span data-ng-if="result.execTime">runtime: {{result.execTime}} ms, HTTP: {{result.httpTime}} ms, {{result.result.length}} results <button class="btn btn-sm btn-secondary" data-ng-click="copyToClipboard(result)">to Clipboard (CSV)</button></span>
   <pre data-ng-if="!options.table">{{result.resultJson}}</pre>
   <aql-result-table data-ng-if="options.table" data="result">
   </aql-result-table>
