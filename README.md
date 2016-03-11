@@ -37,6 +37,7 @@ ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/ar
  * configure how many docs are teturned; from 1 to n, without restrictions
  * display results as json or table
  * show query run time and http time
+ * copy result as CSV to clipboard
 
 #### whats next?
 * link _from / _to
