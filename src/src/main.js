@@ -64,6 +64,7 @@ requirejs(['jquery', 'angular',  'app', 'ngjsoneditor',
   'services/queryService',
   'services/formatService',
   'services/fastFilterService',
+  'services/queriesService',
   'services/testService',
 
   'directives/feedbackDirective',

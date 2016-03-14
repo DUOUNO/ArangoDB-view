@@ -42,7 +42,7 @@ define([], function () {
   }
 
   requirejs.config(requireJsConfig);
-  requirejs(['jquery', 'angular', 'app', 'ngjsoneditor', 'home/homeController', 'navBar/navBarController', 'collectionsBar/collectionsBarController', 'collection/collectionController', 'document/documentController', 'document/documentRouteController', 'manage/collectionsController', 'aql/aqlController', 'services/messageBrokerService', 'services/queryService', 'services/formatService', 'services/fastFilterService', 'services/testService', 'directives/feedbackDirective', 'directives/journalSizeDirective', 'directives/aqlResultTable'], function ($) {
+  requirejs(['jquery', 'angular', 'app', 'ngjsoneditor', 'home/homeController', 'navBar/navBarController', 'collectionsBar/collectionsBarController', 'collection/collectionController', 'document/documentController', 'document/documentRouteController', 'manage/collectionsController', 'aql/aqlController', 'services/messageBrokerService', 'services/queryService', 'services/formatService', 'services/fastFilterService', 'services/queriesService', 'services/testService', 'directives/feedbackDirective', 'directives/journalSizeDirective', 'directives/aqlResultTable'], function ($) {
     $.ajaxSetup({
       cache: false
     });
