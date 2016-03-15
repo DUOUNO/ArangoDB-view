@@ -9,8 +9,8 @@ define(['app'], function (_app) {
     };
   }
 
-  var angularModule = ['$scope', '$http', '$routeParams', '$timeout', 'messageBrokerService', '$interpolate'];
-  angularModule.push(function (scope, http, params, timeout, messageBroker, interpolate) {
+  var angularModule = ['$scope', '$http', '$routeParams', '$timeout', 'messageBrokerService', '$interpolate', 'queriesService'];
+  angularModule.push(function (scope, http, params, timeout, messageBroker, interpolate, queries) {
     http.put('/_db/' + params.currentDatabase + '/_api/query/properties', {
       slowQueryThreshold: 0,
       enabled: true,
@@ -21,18 +21,10 @@ define(['app'], function (_app) {
     var curTimeout = undefined;
     scope.queryResults = [];
     scope.lastError = '';
-    scope.selectedQuery = messageBroker.last('current.query');
-    scope.savedQueries = {
-      unsaved: {
-        name: 'unsaved',
-        options: {
-          eval: 'blur',
-          max: 1000
-        },
-        query: '// eval:asap max:all table:true name:unsaved\n// query\n'
-      }
-    };
+    scope.selectedQuery = queries.currentName();
+    scope.savedQueries = queries.queries;
     scope.options = scope.savedQueries[scope.selectedQuery].options;
+    $('TEXTAREA#aqlEditor').val(scope.savedQueries[scope.selectedQuery].query);
     http.get('/_db/' + params.currentDatabase + '/_api/collection').then(function (data) {
       return collections = data.data.collections.map(function (col) {
         return col.name;
@@ -232,7 +224,7 @@ define(['app'], function (_app) {
         }
       }
 
-      scope.queryResults.length = 0;
+      scope.queryResults.length = idx = 0;
 
       var _buildResult = function _buildResult(qData, httpTime, qSlow) {
         scope.lastError = '';
@@ -297,7 +289,7 @@ define(['app'], function (_app) {
         _send(++idx);
       };
 
-      var _send = function _send(idx) {
+      var _send = function _send() {
         if (!queries[idx]) return;
         var start = performance.now();
         http.post('/_db/' + params.currentDatabase + '/_api/cursor?qid=' + start, {
@@ -371,18 +363,21 @@ define(['app'], function (_app) {
       }
 
       scope.options = scope.savedQueries[scope.selectedQuery].options = opts;
+      queries.save();
     };
 
     scope.changedQuery = function () {
+      scope.queryResults.length = 0;
       var queryName = scope.selectedQuery;
-      console.log('seelct query', queryName);
       $('TEXTAREA#aqlEditor').val(scope.savedQueries[queryName].query);
-      scope.options = scope.savedQueries[queryName].options;
       scope.evalOptions(scope.savedQueries[queryName].query.split('\n')[0]);
+
+      if (scope.options.eval == 'asap') {
+        sendAqlQuery(scope.savedQueries[queryName].query);
+      }
     };
 
     scope.copyToClipboard = function (result) {
-      console.log(result);
       var keys = result.keys;
       var lines = [keys.join('\t')];
       var _iteratorNormalCompletion6 = true;
@@ -443,7 +438,7 @@ define(['app'], function (_app) {
         document.oncopy = null;
       };
 
-      console.log(document.execCommand('copy'));
+      document.execCommand('copy');
     };
 
     scope.$on('$destroy', function () {

@@ -6,29 +6,27 @@
 import app from 'app'
 
 
-let angularModule = ['$scope', '$http', '$routeParams', '$timeout', 'messageBrokerService', '$interpolate'];
+let angularModule = ['$scope', '$http', '$routeParams', '$timeout', 'messageBrokerService', '$interpolate', 'queriesService'];
 
-angularModule.push((scope, http, params, timeout, messageBroker, interpolate) => {
+angularModule.push((scope, http, params, timeout, messageBroker, interpolate, queries) => {
 
   http.put(`/_db/${params.currentDatabase}/_api/query/properties`, {slowQueryThreshold:0, enabled:true, trackSlowQueries:true});
 
 
   console.log('init aqlController');
 
-  let collections   = [];
-  let curTimeout    = undefined;
+  let collections    = [];
+  let curTimeout     = undefined;
   scope.queryResults = [];
   scope.lastError    = '';
 
-  scope.selectedQuery = messageBroker.last('current.query');
-  scope.savedQueries  = {unsaved: {name:'unsaved', options:{eval:'blur', max:1000}, query:'// eval:asap max:all table:true name:unsaved\n// query\n'}};
+  scope.selectedQuery = queries.currentName();
+  scope.savedQueries  = queries.queries;
   scope.options       = scope.savedQueries[scope.selectedQuery].options;
+  $('TEXTAREA#aqlEditor').val(scope.savedQueries[scope.selectedQuery].query);
+
 
   http.get(`/_db/${params.currentDatabase}/_api/collection`).then(data => collections = data.data.collections.map((col) => col.name) );
-
-
-
-
   let words = ['LET', 'IN', 'RETURN', 'TO_NUMBER', 'TO_STRING', 'IS_NULL', 'NOT_NULL', 'FILTER', 'FOR'];
 
   $('TEXTAREA#aqlEditor').on('keydown', (ev) => {
@@ -195,8 +193,8 @@ angularModule.push((scope, http, params, timeout, messageBroker, interpolate) =>
 
   let sendAqlQuery = (txt) => {
     let lines   = txt.split('\n');
-    let queries = []
-    let idx     = undefined
+    let queries = [];
+    let idx     = undefined;
 
     for(let line of lines) {
       if(0 == line.trim().toLowerCase().search(/^\/\/\ *query$/) )
@@ -206,7 +204,7 @@ angularModule.push((scope, http, params, timeout, messageBroker, interpolate) =>
       queries[idx] += line + '\n';
     }
 
-    scope.queryResults.length = 0;
+    scope.queryResults.length = idx = 0;
 
     let _buildResult = (qData, httpTime, qSlow) => {
       scope.lastError = '';
@@ -227,7 +225,7 @@ angularModule.push((scope, http, params, timeout, messageBroker, interpolate) =>
       _send(++idx);
     }
 
-    let _send = (idx) => {
+    let _send = () => {
       if (!queries[idx]) return;
 
       let start = performance.now();
@@ -277,18 +275,21 @@ angularModule.push((scope, http, params, timeout, messageBroker, interpolate) =>
       opts[option.name] = option.f ? option.f(result[1]) : result[1];
     } // for
     scope.options = scope.savedQueries[scope.selectedQuery].options = opts;
+    queries.save();
   } // evalOptions()
 
   scope.changedQuery = () => {
+    scope.queryResults.length = 0;
     let queryName = scope.selectedQuery;
-    console.log('seelct query', queryName);
     $('TEXTAREA#aqlEditor').val(scope.savedQueries[queryName].query);
-    scope.options = scope.savedQueries[queryName].options;
     scope.evalOptions(scope.savedQueries[queryName].query.split('\n')[0]);
+
+    if(scope.options.eval == 'asap') {
+      sendAqlQuery(scope.savedQueries[queryName].query);
+    }
   }
 
   scope.copyToClipboard = (result) => {
-    console.log(result);
     let keys = result.keys;
     let lines = [keys.join('\t')];
 
@@ -305,8 +306,7 @@ angularModule.push((scope, http, params, timeout, messageBroker, interpolate) =>
       e.preventDefault();
       document.oncopy = null;
     } // oncopy()
-
-    console.log(document.execCommand('copy'));
+    document.execCommand('copy');
   }
 
   scope.$on('$destroy', () => $('TEXTAREA#aqlEditor').off('keyup', 'keydown', 'blur') );
