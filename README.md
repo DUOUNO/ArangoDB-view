@@ -1,5 +1,5 @@
 # ArangoDB-view
-`dentist removed much candy`
+`for the impatient`
 
 ArangoDB-view is a poc webinterface for [ArangoDB](http://github.com/arangodb/arangodb). Its based on a flex design.
 
