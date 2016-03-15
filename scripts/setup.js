@@ -12,3 +12,18 @@ db._query( `UPSERT { _key: 'fastFilter' }
                                                  'sort numeric desc': {name:'sort numeric desc', rule:'// sort numeric desc\nsort to_number(doc._key) desc'}
                                                }}
             UPDATE {} IN ${textsCollectionName}`);
+
+
+db._query( `UPSERT { _key: 'savedQueries' }
+            INSERT { _key: 'savedQueries', queries:{ 'unsaved': {"name": "unsaved",
+                                                                 "query": "// eval:asap max:all table:true name:unsaved\n// query\n\n",
+                                                                 "options": {
+                                                                   "table": true,
+                                                                   "eval": "asap",
+                                                                   "max": "all",
+                                                                   "name": "unsaved"
+                                                                  }
+                                                                }
+                                                   }
+                   }
+            UPDATE {} IN ${textsCollectionName}`);
