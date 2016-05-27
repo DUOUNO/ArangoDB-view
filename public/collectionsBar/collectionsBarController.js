@@ -50,7 +50,7 @@ define(['app'], function (_app) {
 
     scope.reloadCollections = function () {
       return http.get('/_db/' + scope.currentDatabase + '/_api/collection').then(function (data) {
-        scope.collections = data.data.collections;
+        scope.collections = data.data.collections || data.data.result;
         scope.setCurrentCollection();
       });
     };

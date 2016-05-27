@@ -28,7 +28,7 @@ angularModule.push((scope, http, interval, messageBroker) => {
     }
   }
 
-  scope.reloadCollections = () => http.get(`/_db/${scope.currentDatabase}/_api/collection`).then(data => {scope.collections = data.data.collections; scope.setCurrentCollection();});
+  scope.reloadCollections = () => http.get(`/_db/${scope.currentDatabase}/_api/collection`).then(data => {scope.collections = data.data.collections || data.data.result ; scope.setCurrentCollection();});
 
   scope.$on('collectionsbar.status', (e,status) => scope.status = status);
 
