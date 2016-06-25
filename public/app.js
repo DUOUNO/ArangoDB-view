@@ -43,6 +43,10 @@ define(['exports', 'angular', 'angular-route', 'angular-animate', 'angular-sanit
       controller: 'aqlController',
       templateUrl: 'aql/aqlView.html'
     });
+    route.when('/database/:currentDatabase/graph', {
+      controller: 'graphController',
+      templateUrl: 'graph/graphView.html'
+    });
     route.when('/database/:currentDatabase', {
       controller: 'homeController',
       templateUrl: 'home/homeView.html'

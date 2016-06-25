@@ -12,7 +12,7 @@ import ngjsoneditor    from 'ngjsoneditor'
 
 window.JSONEditor = jsoneditor;
 
-let app = angular.module('app', ['ngRoute', 'ngAnimate', 'ngSanitize', 'ng.jsoneditor']);
+const app = angular.module('app', ['ngRoute', 'ngAnimate', 'ngSanitize', 'ng.jsoneditor']);
 
 app.config(['$routeProvider', '$locationProvider', '$sceDelegateProvider', (route, locationProvider, sceDelegateProvider) => {
 
@@ -38,6 +38,12 @@ app.config(['$routeProvider', '$locationProvider', '$sceDelegateProvider', (rout
     route.when('/database/:currentDatabase/aql', {
       controller:  'aqlController',
       templateUrl: 'aql/aqlView.html'
+    });
+
+    // G R A P H
+    route.when('/database/:currentDatabase/graph', {
+      controller:  'graphController',
+      templateUrl: 'graph/graphView.html'
     });
 
     // route.when('/collection/:collectionName/:from/:to/:index', {
