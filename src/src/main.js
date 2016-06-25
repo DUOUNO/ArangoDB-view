@@ -60,6 +60,8 @@ requirejs(['jquery', 'angular',  'app', 'ngjsoneditor',
 
   'aql/aqlController',
 
+  'graph/graphController',
+
   'services/messageBrokerService',
   'services/queryService',
   'services/formatService',
