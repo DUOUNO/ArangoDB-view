@@ -2,7 +2,7 @@
   "name": "view",
   "description": "view",
   "author": "Manuel Baesler",
-  "version": "1.0.0-alpha7",
+  "version": "1.0.0-alpha8",
   "license": "AGPLv3",
   "controllers": {
     "/": "controllers/view.js"
