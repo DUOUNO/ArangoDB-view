@@ -206,11 +206,11 @@ angularModule.push((scope, http, params, timeout, messageBroker, interpolate, qu
 
     scope.queryResults.length = idx = 0;
 
-    let _buildResult = (qData, httpTime, qSlow) => {
+    const _buildResult = (qData, httpTime, qSlow = 0) => {
       scope.lastError = '';
-      let result        = scope.queryResults[idx] = {};
-      result.httpTime   = httpTime;
-      result.execTime   = qSlow ? qSlow.runTime * 1000 : 'No timing available';
+      const result        = scope.queryResults[idx] = {};
+      result.httpTime   = httpTime.toFixed(4);
+      result.execTime   = qSlow ? qSlow.toFixed(4) : 'No timing available';
       Object.assign(result, qData.data);
       result.resultJson = JSON.stringify(qData.data.result, false, 2);
       if (scope.options.table) {
@@ -225,23 +225,15 @@ angularModule.push((scope, http, params, timeout, messageBroker, interpolate, qu
       _send(++idx);
     }
 
-    let _send = () => {
+    const _send = () => {
       if (!queries[idx]) return;
 
-      let start = performance.now();
+      const start = performance.now();
       http.post(`/_db/${params.currentDatabase}/_api/cursor?qid=${start}`, {
         batchSize: scope.options.max, query:`// qid:${start}\n` + queries[idx]
       }).then( qData => {
-        let end = performance.now();
+        _buildResult(qData, performance.now()-start, qData.data.extra.stats.executionTime * 1000);
 
-        http.get(`/_db/${params.currentDatabase}/_api/query/slow`).then(data => {
-          for (var i = data.data.length - 1; i >= 0; i--) {
-            let slowq = data.data[i];
-            if (0 != slowq.query.indexOf(`// qid:${start}\n`) ) continue;
-            _buildResult(qData, end-start, slowq);
-            break;
-          } // for
-        }, () => _buildResult(qData, end-start));
       }, (data) => scope.lastError   = data.data.errorMessage);
     }
     _send(0);
