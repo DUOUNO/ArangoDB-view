@@ -2,14 +2,16 @@
   "name": "view",
   "description": "view",
   "author": "Manuel Baesler",
-  "version": "1.0.0-alpha7",
+  "version": "1.0.0-alpha9",
   "license": "AGPLv3",
-  "controllers": {
-    "/": "controllers/view.js"
+
+  "engines": {
+    "arangodb": "^3.0.0"
   },
 
-   "scripts": {
+  "scripts": {
     "setup": "scripts/setup.js"
   },
+  "main": "main.js",
   "defaultDocument":""
 }
