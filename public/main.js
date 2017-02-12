@@ -1,11 +1,16 @@
 define([], function () {
   'use strict';
 
+  /***
+   * (c) 2016 by duo.uno
+   *
+   ***/
+
   var requireJsConfig = {
     waitSeconds: 0,
     shim: {
       'angular': {
-        deps: ['jquery']
+        deps: ['jquery'] // ! load angular bevor jquery to get not the jquery.event in the ng-mouse events    
       },
       'angular-route': {
         deps: ['angular']
@@ -23,8 +28,10 @@ define([], function () {
         deps: ['jsoneditor', 'angular']
       }
     },
+
     paths: {}
   };
+
   var angularVersion = '1-5-0';
   var requireJsPaths = {
     'bootstrap': 'lib/bootstrap-4-0-0',
@@ -42,10 +49,10 @@ define([], function () {
   }
 
   requirejs.config(requireJsConfig);
+
   requirejs(['jquery', 'angular', 'app', 'ngjsoneditor', 'home/homeController', 'navBar/navBarController', 'collectionsBar/collectionsBarController', 'collection/collectionController', 'document/documentController', 'document/documentRouteController', 'manage/collectionsController', 'aql/aqlController', 'graph/graphController', 'services/messageBrokerService', 'services/queryService', 'services/formatService', 'services/fastFilterService', 'services/queriesService', 'services/testService', 'directives/feedbackDirective', 'directives/journalSizeDirective', 'directives/aqlResultTable'], function ($) {
-    $.ajaxSetup({
-      cache: false
-    });
+    $.ajaxSetup({ cache: false });
+
     angular.bootstrap(document, ['app']);
   });
 });

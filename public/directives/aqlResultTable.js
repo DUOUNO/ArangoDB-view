@@ -9,7 +9,11 @@ define(['app'], function (_app) {
     };
   }
 
-  var angularDirective = ['$interpolate', '$sce'];
+  var angularDirective = ['$interpolate', '$sce']; /***
+                                                    * (c) 2016 by duo.uno
+                                                    *
+                                                    ***/
+
   angularDirective.push(function (interpolate, sce) {
     return {
       restrict: 'E',
@@ -17,9 +21,11 @@ define(['app'], function (_app) {
         data: "="
       },
       link: function link(scope, element) {
+
         window.requestAnimationFrame(function () {
           var table = document.createElement('table');
           table.className = 'table table-sm';
+
           var thead = document.createElement('thead');
           var tr = document.createElement('tr');
           var _iteratorNormalCompletion = true;
@@ -29,6 +35,7 @@ define(['app'], function (_app) {
           try {
             for (var _iterator = scope.data.keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
               var key = _step.value;
+
               var th = document.createElement('th');
               th.textContent = key;
               tr.appendChild(th);
@@ -50,7 +57,9 @@ define(['app'], function (_app) {
 
           thead.appendChild(tr);
           table.appendChild(thead);
+
           var tbody = document.createElement('tbody');
+
           var _iteratorNormalCompletion2 = true;
           var _didIteratorError2 = false;
           var _iteratorError2 = undefined;
@@ -60,20 +69,16 @@ define(['app'], function (_app) {
               var doc = _step2.value;
 
               var _tr = document.createElement('tr');
-
               var _iteratorNormalCompletion3 = true;
               var _didIteratorError3 = false;
               var _iteratorError3 = undefined;
 
               try {
                 for (var _iterator3 = scope.data.keys[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                  var key = _step3.value;
-                  var td = document.createElement('td');
-                  td.textContent = interpolate('{{doc[key]}}')({
-                    doc: doc,
-                    key: key
-                  });
+                  var _key = _step3.value;
 
+                  var td = document.createElement('td');
+                  td.textContent = interpolate('{{doc[key]}}')({ doc: doc, key: _key });
                   _tr.appendChild(td);
                 }
               } catch (err) {

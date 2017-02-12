@@ -9,9 +9,14 @@ define(['app'], function (_app) {
     };
   }
 
-  var angularModule = ['$http', '$q', 'messageBrokerService'];
+  var angularModule = ['$http', '$q', 'messageBrokerService']; /***
+                                                                * (c) 2016 by duo.uno
+                                                                *
+                                                                ***/
+
   angularModule.push(function (http, q, messageBroker) {
     var collectionName = '';
+
     http.get('collections').then(function (result) {
       collectionName = result.data.settings;
       reloadFilters();
@@ -19,28 +24,23 @@ define(['app'], function (_app) {
 
     var reloadFilters = function reloadFilters() {
       http.get('/_db/_system/_api/document/' + collectionName + '/fastFilter').then(function (data) {
+
         for (var key in data.data.rules) {
           fastFilter.rules[key] = data.data.rules[key];
-        }
+        } // for
       });
     };
 
     var fastFilter = {
-      rules: {
-        'none': {
-          name: 'none',
-          rule: '// none'
-        }
-      },
+      rules: { 'none': { name: 'none', rule: '// none' } },
       currentRule: function currentRule() {
         return fastFilter.rules[messageBroker.last('current.fastFilter')].rule;
       },
       save: function save() {
-        http.patch('/_db/_system/_api/document/' + collectionName + '/fastFilter', {
-          rules: fastFilter.rules
-        });
+        http.patch('/_db/_system/_api/document/' + collectionName + '/fastFilter', { rules: fastFilter.rules });
       }
     };
+
     return fastFilter;
   });
 

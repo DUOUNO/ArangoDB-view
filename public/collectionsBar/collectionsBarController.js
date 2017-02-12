@@ -9,9 +9,14 @@ define(['app'], function (_app) {
     };
   }
 
-  var angularModule = ['$scope', '$http', '$interval', 'messageBrokerService'];
+  var angularModule = ['$scope', '$http', '$interval', 'messageBrokerService']; /***
+                                                                                 * (c) 2016 by duo.uno
+                                                                                 *
+                                                                                 ***/
+
   angularModule.push(function (scope, http, interval, messageBroker) {
     console.log('define collectionsBarController');
+
     messageBroker.sub('collectionsbar.status collections.reload current.collection current.database', scope);
     scope.cfg = {};
     scope.status = 1;
@@ -50,21 +55,22 @@ define(['app'], function (_app) {
 
     scope.reloadCollections = function () {
       return http.get('/_db/' + scope.currentDatabase + '/_api/collection').then(function (data) {
-        scope.collections = data.data.collections || data.data.result;
-        scope.setCurrentCollection();
+        scope.collections = data.data.collections || data.data.result;scope.setCurrentCollection();
       });
     };
 
     scope.$on('collectionsbar.status', function (e, status) {
       return scope.status = status;
     });
+
     scope.$on('collections.reload', function () {
       return scope.reloadCollections();
     });
+
     scope.$on('current.collection', function (e, currentCollection) {
-      scope.currentCollection = currentCollection;
-      scope.setCurrentCollection();
+      scope.currentCollection = currentCollection;scope.setCurrentCollection();
     });
+
     scope.$on('current.database', function (e, database) {
       if (database === scope.currentDatabase) return;
       scope.currentDatabase = database;

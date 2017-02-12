@@ -9,19 +9,18 @@ define(['app'], function (_app) {
     };
   }
 
-  var angularModule = ['$http', '$q', 'messageBrokerService'];
+  var angularModule = ['$http', '$q', 'messageBrokerService']; /***
+                                                                * (c) 2016 by duo.uno
+                                                                *
+                                                                ***/
+
   angularModule.push(function (http, q, messageBroker) {
+
     return {
       query: function query(_query) {
         var d = q.defer();
         console.log('AQL-QUERY', _query);
-        http.post('/_db/' + messageBroker.last('current.database') + '/_api/cursor', {
-          cache: false,
-          query: _query,
-          options: {
-            fullCount: true
-          }
-        }).then(function (data) {
+        http.post('/_db/' + messageBroker.last('current.database') + '/_api/cursor', { cache: false, query: _query, options: { fullCount: true } }).then(function (data) {
           d.resolve(data.data);
         });
         return d.promise;

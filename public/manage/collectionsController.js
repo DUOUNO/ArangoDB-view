@@ -9,39 +9,33 @@ define(['app'], function (_app) {
     };
   }
 
-  var angularModule = ['$scope', '$http', '$routeParams', 'messageBrokerService', 'formatService', '$q'];
+  var angularModule = ['$scope', '$http', '$routeParams', 'messageBrokerService', 'formatService', '$q']; /***
+                                                                                                           * (c) 2016 by duo.uno
+                                                                                                           *
+                                                                                                           ***/
+
   angularModule.push(function (scope, http, params, messageBroker, formatService, q) {
     scope.format = formatService;
     scope.params = params;
     scope.Number = Number;
     scope.showNewColForm = false;
-    scope.newCol = {
-      type: 2,
-      waitForSync: true,
-      isVolatile: false,
-      indexBuckets: 8,
-      isSystem: false,
-      doCompact: true,
-      journalSize: 1024 * 1024 * 32
-    };
-    scope.indexBucketSizes = {};
+    scope.newCol = { type: 2, waitForSync: true, isVolatile: false, indexBuckets: 8, isSystem: false, doCompact: true, journalSize: 1024 * 1024 * 32 };
 
+    scope.indexBucketSizes = {};
     for (var i = 1; i <= 1024; i = i * 2) {
       scope.indexBucketSizes[i] = 1;
-    }
-
-    scope.reloadCollections = function () {
+    }scope.reloadCollections = function () {
       http.get('/_db/' + params.currentDatabase + '/_api/collection').then(function (data) {
-        scope.collections = data.data.collections;
-        scope.colIds = {};
+        scope.collections = data.data.result;
+        scope.colIds = {}; // map colId to collections[]
         scope.indexes = {};
+
         scope.collections.forEach(function (col) {
           col.expanded = false;
           scope.colIds[col.id] = col;
         });
       });
     };
-
     scope.reloadCollections();
 
     scope.orderCollection = function (col) {
@@ -50,7 +44,6 @@ define(['app'], function (_app) {
 
     scope.loadColDetails = function (col, open) {
       if (!open) return;
-
       if (col.status == 3) {
         http.get('/_db/' + params.currentDatabase + '/_api/collection/' + col.id + '/figures').then(function (data) {
           Object.assign(scope.colIds[col.id], data.data);
@@ -61,7 +54,7 @@ define(['app'], function (_app) {
         http.get('/_db/' + params.currentDatabase + '/_api/index?collection=' + col.id).then(function (data) {
           return scope.indexes[col.id] = data.data.indexes;
         });
-      }
+      } // if
     };
 
     scope.createNewCollection = function () {
@@ -73,13 +66,10 @@ define(['app'], function (_app) {
 
     scope.doAction = function (action, col) {
       if (col.status == 2 && action != 'load') return;
-      var promise = undefined;
-
+      var promise = void 0;
       switch (action) {
         case 'load':
-          promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/load', {
-            count: false
-          });
+          promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/load', { count: false });
           break;
 
         case 'unload':
@@ -96,9 +86,7 @@ define(['app'], function (_app) {
           break;
 
         case 'rename':
-          promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/rename', {
-            name: col.editName
-          });
+          promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/rename', { name: col.editName });
           break;
 
         case 'indexBuckets':
@@ -108,10 +96,9 @@ define(['app'], function (_app) {
           promise = http.put('/_db/' + params.currentDatabase + '/_api/collection/' + col.name + '/properties', {
             indexBuckets: col.indexBuckets,
             waitForSync: col.waitForSync,
-            journalSize: action == 'journalSize2' ? col.journalSize2 : col.journalSize10
-          });
+            journalSize: action == 'journalSize2' ? col.journalSize2 : col.journalSize10 });
           break;
-      }
+      } // switch
 
       promise.then(function (data) {
         switch (action) {
@@ -141,12 +128,9 @@ define(['app'], function (_app) {
           case 'journalSize10':
             scope.loadColDetails(col, true);
             break;
-        }
+        } // switch
       }, function (err) {
-        messageBroker.pub(col.id + '-feedback', {
-          msg: 'ERRNo: ' + err.data.errorNum + ', ' + err.data.errorMessage,
-          type: 'danger'
-        });
+        messageBroker.pub(col.id + '-feedback', { msg: 'ERRNo: ' + err.data.errorNum + ', ' + err.data.errorMessage, type: 'danger' });
         scope.loadColDetails(col, true);
       });
     };

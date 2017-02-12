@@ -9,9 +9,14 @@ define(['app'], function (_app) {
     };
   }
 
-  var angularModule = ['$http', '$q', 'messageBrokerService'];
+  var angularModule = ['$http', '$q', 'messageBrokerService']; /***
+                                                                * (c) 2016 by duo.uno
+                                                                *
+                                                                ***/
+
   angularModule.push(function (http, q, messageBroker) {
     var collectionName = '';
+
     http.get('collections').then(function (result) {
       collectionName = result.data.settings;
       reloadQueries();
@@ -19,32 +24,23 @@ define(['app'], function (_app) {
 
     var reloadQueries = function reloadQueries() {
       http.get('/_db/_system/_api/document/' + collectionName + '/savedQueries').then(function (data) {
+
         for (var key in data.data.queries) {
           queries.queries[key] = data.data.queries[key];
-        }
+        } // for
       });
     };
 
     var queries = {
-      queries: {
-        unsaved: {
-          name: 'unsaved',
-          options: {
-            eval: 'blur',
-            max: 1000
-          },
-          query: '// eval:asap max:all table:true name:unsaved\n// query\n'
-        }
-      },
+      queries: { unsaved: { name: 'unsaved', options: { eval: 'blur', max: 1000 }, query: '// eval:asap max:all table:true name:unsaved\n// query\n' } },
       currentName: function currentName() {
         return queries.queries[messageBroker.last('current.query')].name;
       },
       save: function save() {
-        http.patch('/_db/_system/_api/document/' + collectionName + '/savedQueries', {
-          queries: queries.queries
-        });
+        http.patch('/_db/_system/_api/document/' + collectionName + '/savedQueries', { queries: queries.queries });
       }
     };
+
     return queries;
   });
 

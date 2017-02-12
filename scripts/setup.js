@@ -1,6 +1,7 @@
+'use strict';
 
-var db = require("org/arangodb").db;
-var textsCollectionName = applicationContext.collectionName("settings");
+const db = require('@arangodb').db;
+const textsCollectionName = module.context.collectionName('settings');
 
 if (db._collection(textsCollectionName) === null) {
   db._create(textsCollectionName);

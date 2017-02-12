@@ -9,8 +9,13 @@ define(['app'], function (_app) {
     };
   }
 
-  var transactions = {};
+  var transactions = {}; /***
+                          * (c) 2016 by duo.uno
+                          *
+                          ***/
+
   var lastData = {};
+
   var MessageBrokerService = {
     sub: function sub(msgs, scope) {
       console.log('SUB', msgs);
@@ -21,6 +26,7 @@ define(['app'], function (_app) {
       try {
         var _loop = function _loop() {
           var msg = _step.value;
+
           (transactions[msg] || (transactions[msg] = [])).push(scope);
           scope.$on('$destroy', function () {
             return MessageBrokerService.usub(msg, scope);
@@ -45,6 +51,7 @@ define(['app'], function (_app) {
         }
       }
     },
+
     pub: function pub(msg, data) {
       console.log('PUB', msg, data);
       lastData[msg] = data;
@@ -56,6 +63,7 @@ define(['app'], function (_app) {
       try {
         for (var _iterator2 = transactions[msg][Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
           var scope = _step2.value;
+
           scope.$emit(msg, data);
         }
       } catch (err) {
@@ -73,19 +81,18 @@ define(['app'], function (_app) {
         }
       }
     },
+
     last: function last(msg) {
       return lastData[msg];
     },
+
     usub: function usub(msgs, scope) {
       for (var _msg in msgs.replace(/\ +/g, ' ').trim().split(' ')) {
         if (!transactions[_msg]) continue;
-
         for (var idx in transactions[_msg]) {
           var s = transactions[_msg][idx];
-
           if (s.$id === scope.$id) {
             transactions[_msg].splice(idx, 1);
-
             break;
           }
         }
