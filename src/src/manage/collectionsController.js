@@ -19,8 +19,8 @@ angularModule.push((scope, http, params, messageBroker, formatService, q) => {
   for(let i = 1; i <= 1024; i=i*2) scope.indexBucketSizes[i] = 1;
 
   scope.reloadCollections = () => {
-    http.get(`/_db/${params.currentDatabase}/_api/collection`).then(data => {
-      scope.collections = data.data.collections;
+    http.get(`/_db/${params.currentDatabase}/_api/collection`).then(data => {
+      scope.collections = data.data.result;
       scope.colIds      = {}; // map colId to collections[]
       scope.indexes     = {};
 
